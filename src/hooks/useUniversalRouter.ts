@@ -62,6 +62,7 @@ export function useUniversalRouterSwapCallback(
         if (!chainId) throw new Error('missing chainId')
         if (!provider) throw new Error('missing provider')
         if (!trade) throw new Error('missing trade')
+
         const connectedChainId = await provider.getSigner().getChainId()
         if (chainId !== connectedChainId) throw new WrongChainError()
 

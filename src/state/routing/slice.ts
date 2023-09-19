@@ -1,12 +1,16 @@
 import { createApi, fetchBaseQuery, FetchBaseQueryError } from '@reduxjs/toolkit/query/react'
 import { Protocol } from '@uniswap/router-sdk'
-import { TradeType } from '@uniswap/sdk-core'
+import { Percent, TradeType } from '@uniswap/sdk-core'
+import { SwapRouter, UNIVERSAL_ROUTER_ADDRESS } from '@uniswap/universal-router-sdk'
 import { sendAnalyticsEvent } from 'analytics'
+import axios from 'axios'
 import { isUniswapXSupportedChain } from 'constants/chains'
+import { Interface } from 'ethers/lib/utils'
 import { getClientSideQuote } from 'lib/hooks/routing/clientSideSmartOrderRouter'
 import ms from 'ms'
 import { logSwapQuoteRequest } from 'tracing/swapFlowLoggers'
 import { trace } from 'tracing/trace'
+import { getUsdcAddressDstChain } from 'utils/chains'
 
 import {
   GetQuoteArgs,
@@ -16,6 +20,7 @@ import {
   RouterPreference,
   RoutingConfig,
   SwapRouterNativeAssets,
+  TradeFillType,
   TradeResult,
   URAQuoteResponse,
   URAQuoteType,
@@ -127,12 +132,20 @@ export const routingApi = createApi({
         if (shouldUseAPIRouter(args)) {
           fellBack = true
           try {
-            const { tokenInAddress, tokenInChainId, tokenOutAddress, tokenOutChainId, amount, tradeType } = args
+            const {
+              tokenInAddress: mockTokenInAddress,
+              tokenInChainId: mockTokenInChainId,
+              tokenOutAddress,
+              tokenOutChainId,
+              amount,
+              tradeType,
+              account,
+            } = args
             const type = isExactInput(tradeType) ? 'EXACT_INPUT' : 'EXACT_OUTPUT'
 
             const requestBody = {
-              tokenInChainId,
-              tokenIn: tokenInAddress,
+              tokenInChainId: tokenOutChainId,
+              tokenIn: getUsdcAddressDstChain(tokenOutChainId),
               tokenOutChainId,
               tokenOut: tokenOutAddress,
               amount,
@@ -145,6 +158,8 @@ export const routingApi = createApi({
               url: '/quote',
               body: JSON.stringify(requestBody),
             })
+
+            console.log({ response })
 
             if (response.error) {
               try {
@@ -171,8 +186,65 @@ export const routingApi = createApi({
 
             const uraQuoteResponse = response.data as URAQuoteResponse
             const tradeResult = await transformRoutesToTrade(args, uraQuoteResponse, QuoteMethod.ROUTING_API)
+
+            if (!tradeResult.trade) {
+              window.alert('need to figure out how to handle now trade from API')
+              throw new Error('need to figure out how to handle no trade from API')
+            } else if (tradeResult.trade.fillType !== TradeFillType.Classic) {
+              window.alert('trade fill type was not classic')
+              throw new Error('trade fill type was not classic')
+            }
+
+            const { calldata: data, value } = SwapRouter.swapERC20CallParameters(tradeResult.trade, {
+              slippageTolerance: new Percent(5, 1000),
+            })
+
+            const tokenInterface = new Interface(['function approve(address,uint256)'])
+
+            const approvalData = tokenInterface.encodeFunctionData('approve', [
+              UNIVERSAL_ROUTER_ADDRESS(tokenOutChainId),
+              amount,
+            ])
+
+            // tokenIdAddress should always be USDC on the destination chain
+
+            const estimateRequestBody = {
+              transactions: [
+                {
+                  to: getUsdcAddressDstChain(tokenOutChainId),
+                  data: approvalData,
+                },
+                {
+                  to: UNIVERSAL_ROUTER_ADDRESS(tokenOutChainId),
+                  data,
+                },
+              ],
+              userAddress: account,
+              sourceToken: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174', // USDC on polygon
+              tokenAmount: amount,
+              sourceChain: 137,
+              destinationChain: tokenOutChainId,
+            }
+
+            // const host = 'http://localhost:4000'
+            const host = 'https://api.peaze.com'
+
+            const request = await axios.request({
+              method: 'POST',
+              url: `${host}/api/v1/transactions/estimate`,
+              data: estimateRequestBody,
+              headers: {
+                'Content-Type': 'application/json',
+                'X-Api-Key': 'bfdf4627-9767-4f93-961a-a27ac2f02955',
+              },
+            })
+
+            // TODO: now get the Peaze estimate
+            console.log({ tradeResult, data, value, approvalData, amount, request })
+
             return { data: { ...tradeResult, latencyMs: getQuoteLatencyMeasure(quoteStartMark).duration } }
           } catch (error: any) {
+            console.log({ error })
             console.warn(
               `GetQuote failed on Unified Routing API, falling back to client: ${
                 error?.message ?? error?.detail ?? error
@@ -184,8 +256,10 @@ export const routingApi = createApi({
           const method = fellBack ? QuoteMethod.CLIENT_SIDE_FALLBACK : QuoteMethod.CLIENT_SIDE
           const router = getRouter(args.tokenInChainId)
           const quoteResult = await getClientSideQuote(args, router, CLIENT_PARAMS)
+
           if (quoteResult.state === QuoteState.SUCCESS) {
             const trade = await transformRoutesToTrade(args, quoteResult.data, method)
+
             return {
               data: { ...trade, latencyMs: getQuoteLatencyMeasure(quoteStartMark).duration },
             }

@@ -69,6 +69,7 @@ export function useRoutingAPITrade<TTradeType extends TradeType>(
   state: TradeState
   trade?: InterfaceTrade
   method?: QuoteMethod
+  // TODO: add peaze fee here
   swapQuoteLatency?: number
 } {
   const [currencyIn, currencyOut]: [Currency | undefined, Currency | undefined] = useMemo(

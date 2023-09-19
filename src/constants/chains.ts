@@ -26,7 +26,19 @@ export const CHAIN_IDS_TO_NAMES = {
 } as const
 
 // Include ChainIds in this array if they are not supported by the UX yet, but are already in the SDK.
-const NOT_YET_UX_SUPPORTED_CHAIN_IDS: number[] = [ChainId.BASE_GOERLI]
+const NOT_YET_UX_SUPPORTED_CHAIN_IDS: number[] = [
+  ChainId.BASE_GOERLI,
+  ChainId.MAINNET,
+  ChainId.GOERLI,
+  ChainId.SEPOLIA,
+  ChainId.POLYGON_MUMBAI,
+  ChainId.CELO,
+  ChainId.CELO_ALFAJORES,
+  ChainId.ARBITRUM_GOERLI,
+  ChainId.OPTIMISM_GOERLI,
+  ChainId.BNB,
+  ChainId.AVALANCHE,
+]
 
 // TODO: include BASE_GOERLI when routing is implemented
 export type SupportedInterfaceChain = Exclude<SupportedChainsType, ChainId.BASE_GOERLI>
@@ -80,17 +92,7 @@ export const TESTNET_CHAIN_IDS = [
 /**
  * All the chain IDs that are running the Ethereum protocol.
  */
-export const L1_CHAIN_IDS = [
-  ChainId.MAINNET,
-  ChainId.GOERLI,
-  ChainId.SEPOLIA,
-  ChainId.POLYGON,
-  ChainId.POLYGON_MUMBAI,
-  ChainId.CELO,
-  ChainId.CELO_ALFAJORES,
-  ChainId.BNB,
-  ChainId.AVALANCHE,
-] as const
+export const L1_CHAIN_IDS = [ChainId.POLYGON] as const
 
 export type SupportedL1ChainId = (typeof L1_CHAIN_IDS)[number]
 
@@ -98,13 +100,7 @@ export type SupportedL1ChainId = (typeof L1_CHAIN_IDS)[number]
  * Controls some L2 specific behavior, e.g. slippage tolerance, special UI behavior.
  * The expectation is that all of these networks have immediate transaction confirmation.
  */
-export const L2_CHAIN_IDS = [
-  ChainId.ARBITRUM_ONE,
-  ChainId.ARBITRUM_GOERLI,
-  ChainId.OPTIMISM,
-  ChainId.OPTIMISM_GOERLI,
-  ChainId.BASE,
-] as const
+export const L2_CHAIN_IDS = [ChainId.ARBITRUM_ONE, ChainId.OPTIMISM, ChainId.BASE] as const
 
 export type SupportedL2ChainId = (typeof L2_CHAIN_IDS)[number]
 

@@ -9,6 +9,7 @@ import {
   SwapEventName,
 } from '@uniswap/analytics-events'
 import { ChainId, Currency, CurrencyAmount, Percent, Token } from '@uniswap/sdk-core'
+import { TokenInfo } from '@uniswap/token-lists'
 import { UNIVERSAL_ROUTER_ADDRESS } from '@uniswap/universal-router-sdk'
 import { useWeb3React } from '@web3-react/core'
 import { sendAnalyticsEvent, Trace, TraceEvent, useTrace } from 'analytics'
@@ -49,6 +50,7 @@ import { ArrowDown } from 'react-feather'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Text } from 'rebass'
 import { useAppSelector } from 'state/hooks'
+import { WrappedTokenInfo } from 'state/lists/wrappedTokenInfo'
 import { InterfaceTrade, TradeState } from 'state/routing/types'
 import { isClassicTrade, isUniswapXTrade } from 'state/routing/utils'
 import { Field, forceExactInput, replaceSwapState } from 'state/swap/actions'
@@ -57,6 +59,7 @@ import swapReducer, { initialState as initialSwapState, SwapState } from 'state/
 import styled, { useTheme } from 'styled-components'
 import { LinkStyledButton, ThemedText } from 'theme'
 import { maybeLogFirstSwapAction } from 'tracing/swapFlowLoggers'
+import { getUsdcAddressDstChain } from 'utils/chains'
 import { computeFiatValuePriceImpact } from 'utils/computeFiatValuePriceImpact'
 import { NumberType, useFormatter } from 'utils/formatNumbers'
 import { maxAmountSpend } from 'utils/maxAmountSpend'
@@ -67,6 +70,21 @@ import { useScreenSize } from '../../hooks/useScreenSize'
 import { useIsDarkMode } from '../../theme/components/ThemeToggle'
 import { OutputTaxTooltipBody } from './TaxTooltipBody'
 import { UniswapXOptIn } from './UniswapXOptIn'
+
+// Polygon Usdc
+const UsdcToken: TokenInfo = {
+  chainId: 137,
+  address: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
+  name: 'USDCoin',
+  logoURI:
+    'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png',
+  symbol: 'USDC',
+  decimals: 6,
+}
+
+const usdc = new WrappedTokenInfo(UsdcToken)
+
+console.log({ usdc })
 
 export const ArrowContainer = styled.div`
   display: inline-flex;
@@ -149,9 +167,9 @@ export default function SwapPage({ className }: { className?: string }) {
       <PageWrapper>
         <Swap
           className={className}
-          chainId={supportedChainId ?? ChainId.MAINNET}
+          chainId={supportedChainId ?? ChainId.POLYGON}
           prefilledState={{
-            [Field.INPUT]: { currencyId: loadedUrlParams?.[Field.INPUT]?.currencyId },
+            [Field.INPUT]: { currencyId: getUsdcAddressDstChain(supportedChainId ?? 137) },
             [Field.OUTPUT]: { currencyId: loadedUrlParams?.[Field.OUTPUT]?.currencyId },
           }}
           disableTokenInputs={supportedChainId === undefined}
@@ -270,7 +288,10 @@ export function Swap({
     }
   }, [connectedChainId, prefilledState, previousConnectedChainId, previousPrefilledState])
 
-  const swapInfo = useDerivedSwapInfo(state, chainId)
+  const swapInfo = useDerivedSwapInfo(
+    { ...state, [Field.INPUT]: { currencyId: getUsdcAddressDstChain(connectedChainId ?? 137) } },
+    chainId
+  )
   const {
     trade: { state: tradeState, trade, swapQuoteLatency },
     allowedSlippage,
@@ -642,9 +663,13 @@ export function Swap({
             <ArrowContainer
               data-testid="swap-currency-button"
               onClick={() => {
-                if (disableTokenInputs) return
-                onSwitchTokens(inputTokenHasTax, formattedAmounts[dependentField])
-                maybeLogFirstSwapAction(trace)
+                return
+
+                //
+                // if (disableTokenInputs) return
+                // onSwitchTokens(inputTokenHasTax, formattedAmounts[dependentField])
+                // maybeLogFirstSwapAction(trace)
+                //
               }}
               color={theme.neutral1}
             >
