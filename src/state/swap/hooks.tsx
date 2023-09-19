@@ -5,6 +5,7 @@ import { useFotAdjustmentsEnabled } from 'featureFlags/flags/fotAdjustments'
 import useAutoSlippageTolerance from 'hooks/useAutoSlippageTolerance'
 import { useDebouncedTrade } from 'hooks/useDebouncedTrade'
 import { useSwapTaxes } from 'hooks/useSwapTaxes'
+import { usePolygonUsdcBalance } from 'lib/hooks/useCurrencyBalance'
 import tryParseCurrencyAmount from 'lib/utils/tryParseCurrencyAmount'
 import { ParsedQs } from 'qs'
 import { ReactNode, useCallback, useEffect, useMemo } from 'react'
@@ -123,6 +124,8 @@ export function useDerivedSwapInfo(state: SwapState, chainId: ChainId | undefine
     useMemo(() => [inputCurrency ?? undefined, outputCurrency ?? undefined], [inputCurrency, outputCurrency])
   )
 
+  const polygonUsdcBalance = usePolygonUsdcBalance(account ?? undefined)
+
   const isExactIn: boolean = independentField === Field.INPUT
   const parsedAmount = useMemo(
     () => tryParseCurrencyAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined),
@@ -141,10 +144,10 @@ export function useDerivedSwapInfo(state: SwapState, chainId: ChainId | undefine
 
   const currencyBalances = useMemo(
     () => ({
-      [Field.INPUT]: relevantTokenBalances[0],
+      [Field.INPUT]: polygonUsdcBalance,
       [Field.OUTPUT]: relevantTokenBalances[1],
     }),
-    [relevantTokenBalances]
+    [relevantTokenBalances, polygonUsdcBalance]
   )
 
   const currencies: { [field in Field]?: Currency | null } = useMemo(

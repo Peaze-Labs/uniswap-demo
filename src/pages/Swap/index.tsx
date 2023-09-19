@@ -84,8 +84,6 @@ const UsdcToken: TokenInfo = {
 
 const usdc = new WrappedTokenInfo(UsdcToken)
 
-console.log({ usdc })
-
 export const ArrowContainer = styled.div`
   display: inline-flex;
   align-items: center;
@@ -167,7 +165,7 @@ export default function SwapPage({ className }: { className?: string }) {
       <PageWrapper>
         <Swap
           className={className}
-          chainId={supportedChainId ?? ChainId.POLYGON}
+          chainId={supportedChainId ?? ChainId.OPTIMISM}
           prefilledState={{
             [Field.INPUT]: { currencyId: getUsdcAddressDstChain(supportedChainId ?? 137) },
             [Field.OUTPUT]: { currencyId: loadedUrlParams?.[Field.OUTPUT]?.currencyId },
@@ -554,6 +552,7 @@ export function Swap({
 
   const handleMaxInput = useCallback(() => {
     maxInputAmount && onUserInput(Field.INPUT, maxInputAmount.toExact())
+
     maybeLogFirstSwapAction(trace)
   }, [maxInputAmount, onUserInput, trace])
 
@@ -651,6 +650,7 @@ export function Swap({
               id={InterfaceSectionName.CURRENCY_INPUT_PANEL}
               loading={independentField === Field.OUTPUT && routeIsSyncing}
               ref={inputCurrencyNumericalInputRef}
+              showPolygonUsdc={true}
             />
           </Trace>
         </SwapSection>

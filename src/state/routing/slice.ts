@@ -159,8 +159,6 @@ export const routingApi = createApi({
               body: JSON.stringify(requestBody),
             })
 
-            console.log({ response })
-
             if (response.error) {
               try {
                 // cast as any here because we do a runtime check on it being an object before indexing into .errorCode
@@ -199,20 +197,34 @@ export const routingApi = createApi({
               slippageTolerance: new Percent(5, 1000),
             })
 
-            const tokenInterface = new Interface(['function approve(address,uint256)'])
+            const permit2Address = '0x000000000022D473030F116dDEE9F6B43aC78BA3'
 
-            const approvalData = tokenInterface.encodeFunctionData('approve', [
-              UNIVERSAL_ROUTER_ADDRESS(tokenOutChainId),
-              amount,
+            const tokenInterface = new Interface(['function approve(address,uint256)'])
+            const permit2Interface = new Interface([
+              'function approve(address token, address spender, uint160 amount, uint48 expiration)',
             ])
 
-            // tokenIdAddress should always be USDC on the destination chain
+            const permit2ApprovalData = permit2Interface.encodeFunctionData('approve', [
+              getUsdcAddressDstChain(tokenOutChainId),
+              UNIVERSAL_ROUTER_ADDRESS(tokenOutChainId),
+              BigInt(amount) * 2n,
+              281_474_976_710_655,
+            ])
+
+            if (!account || !tokenOutAddress || !getUsdcAddressDstChain(tokenOutChainId)) {
+              return { data: { ...tradeResult, latencyMs: getQuoteLatencyMeasure(quoteStartMark).duration } }
+            }
 
             const estimateRequestBody = {
               transactions: [
                 {
                   to: getUsdcAddressDstChain(tokenOutChainId),
-                  data: approvalData,
+                  data: tokenInterface.encodeFunctionData('approve', [permit2Address, 10n ** 18n]),
+                },
+                // Permit universal router to use permit2 contract
+                {
+                  to: permit2Address,
+                  data: permit2ApprovalData,
                 },
                 {
                   to: UNIVERSAL_ROUTER_ADDRESS(tokenOutChainId),
@@ -226,8 +238,8 @@ export const routingApi = createApi({
               destinationChain: tokenOutChainId,
             }
 
-            // const host = 'http://localhost:4000'
-            const host = 'https://api.peaze.com'
+            const host = 'http://localhost:4000'
+            // const host = 'https://api.peaze.com'
 
             const request = await axios.request({
               method: 'POST',
@@ -239,8 +251,7 @@ export const routingApi = createApi({
               },
             })
 
-            // TODO: now get the Peaze estimate
-            console.log({ tradeResult, data, value, approvalData, amount, request })
+            console.log({ request, estimateRequestBody })
 
             return { data: { ...tradeResult, latencyMs: getQuoteLatencyMeasure(quoteStartMark).duration } }
           } catch (error: any) {

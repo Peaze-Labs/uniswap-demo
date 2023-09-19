@@ -10,6 +10,7 @@ import { LoadingOpacityContainer, loadingOpacityMixin } from 'components/Loader/
 import CurrencyLogo from 'components/Logo/CurrencyLogo'
 import Tooltip from 'components/Tooltip'
 import { isSupportedChain } from 'constants/chains'
+import { usePolygonUsdcBalance } from 'lib/hooks/useCurrencyBalance'
 import ms from 'ms'
 import { darken } from 'polished'
 import { forwardRef, ReactNode, useCallback, useEffect, useState } from 'react'
@@ -242,6 +243,7 @@ interface SwapCurrencyInputPanelProps {
     onDisabledClick?: () => void
     disabledTooltipBody?: ReactNode
   }
+  showPolygonUsdc?: boolean
 }
 
 const SwapCurrencyInputPanel = forwardRef<HTMLInputElement, SwapCurrencyInputPanelProps>(
@@ -269,6 +271,7 @@ const SwapCurrencyInputPanel = forwardRef<HTMLInputElement, SwapCurrencyInputPan
       disabled = false,
       numericalInputSettings,
       label,
+      showPolygonUsdc,
       ...rest
     },
     ref
@@ -276,8 +279,11 @@ const SwapCurrencyInputPanel = forwardRef<HTMLInputElement, SwapCurrencyInputPan
     const [modalOpen, setModalOpen] = useState(false)
     const { account, chainId } = useWeb3React()
     const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
+    const polygonUsdcBalance = usePolygonUsdcBalance(account ?? undefined)
     const theme = useTheme()
     const { formatCurrencyAmount } = useFormatter()
+
+    const currencyBalance = showPolygonUsdc ? polygonUsdcBalance : selectedCurrencyBalance
 
     const handleDismissSearch = useCallback(() => {
       setModalOpen(false)
@@ -393,21 +399,21 @@ const SwapCurrencyInputPanel = forwardRef<HTMLInputElement, SwapCurrencyInputPan
                       fontSize={14}
                       style={{ display: 'inline' }}
                     >
-                      {!hideBalance && currency && selectedCurrencyBalance ? (
+                      {!hideBalance && currency && currencyBalance ? (
                         renderBalance ? (
-                          renderBalance(selectedCurrencyBalance)
+                          renderBalance(currencyBalance)
                         ) : (
                           <Trans>
                             Balance:{' '}
                             {formatCurrencyAmount({
-                              amount: selectedCurrencyBalance,
+                              amount: currencyBalance,
                               type: NumberType.TokenNonTx,
                             })}
                           </Trans>
                         )
                       ) : null}
                     </ThemedText.DeprecatedBody>
-                    {showMaxButton && selectedCurrencyBalance ? (
+                    {showMaxButton && currencyBalance ? (
                       <TraceEvent
                         events={[BrowserEvent.onClick]}
                         name={SwapEventName.SWAP_MAX_TOKEN_AMOUNT_SELECTED}

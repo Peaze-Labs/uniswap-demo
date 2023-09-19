@@ -1,11 +1,14 @@
 import { Interface } from '@ethersproject/abi'
-import { Currency, CurrencyAmount, Token } from '@uniswap/sdk-core'
+import { Contract } from '@ethersproject/contracts'
+import { JsonRpcProvider } from '@ethersproject/providers'
+import { ChainId, Currency, CurrencyAmount, Token } from '@uniswap/sdk-core'
 import { useWeb3React } from '@web3-react/core'
 import ERC20ABI from 'abis/erc20.json'
 import { Erc20Interface } from 'abis/types/Erc20'
+import { RPC_URLS } from 'constants/networks'
 import JSBI from 'jsbi'
 import { useMultipleContractSingleData, useSingleContractMultipleData } from 'lib/hooks/multicall'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { nativeOnChain } from '../../constants/tokens'
 import { useInterfaceMulticall } from '../../hooks/useContract'
@@ -142,4 +145,40 @@ export default function useCurrencyBalance(
     account,
     useMemo(() => [currency], [currency])
   )[0]
+}
+
+const PolygonUSDC = new Token(
+  137,
+  '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174', // USDC on polygon'
+  6,
+  'USDC',
+  'USDCoin'
+)
+
+export function usePolygonUsdcBalance(account?: string): CurrencyAmount<Currency> | undefined {
+  const [amount, setAmount] = useState<CurrencyAmount<Currency>>(CurrencyAmount.fromRawAmount(PolygonUSDC, 0))
+
+  const getUsdcBalance = async () => {
+    if (!account) return CurrencyAmount.fromRawAmount(PolygonUSDC, 0)
+
+    const usdcContract = new Contract(
+      PolygonUSDC.address,
+      ERC20Interface,
+      new JsonRpcProvider(RPC_URLS[ChainId.POLYGON][0])
+    )
+
+    const amount = await usdcContract.balanceOf(account)
+
+    return CurrencyAmount.fromRawAmount(PolygonUSDC, amount)
+  }
+
+  useEffect(() => {
+    getUsdcBalance()
+      .then((_amount: CurrencyAmount<Currency>) => {
+        setAmount(_amount)
+      })
+      .catch((e) => console.error('Error fetching currency amount'))
+  }, [account])
+
+  return amount
 }
