@@ -6,7 +6,6 @@ import { sendAnalyticsEvent } from 'analytics'
 import axios from 'axios'
 import { isUniswapXSupportedChain } from 'constants/chains'
 import { Interface } from 'ethers/lib/utils'
-import { getClientSideQuote } from 'lib/hooks/routing/clientSideSmartOrderRouter'
 import ms from 'ms'
 import { logSwapQuoteRequest } from 'tracing/swapFlowLoggers'
 import { trace } from 'tracing/trace'
@@ -25,7 +24,7 @@ import {
   URAQuoteResponse,
   URAQuoteType,
 } from './types'
-import { getRouter, isExactInput, shouldUseAPIRouter, transformRoutesToTrade } from './utils'
+import { isExactInput, shouldUseAPIRouter, transformRoutesToTrade } from './utils'
 
 const UNISWAP_API_URL = process.env.REACT_APP_UNISWAP_API_URL
 if (UNISWAP_API_URL === undefined) {
@@ -238,8 +237,8 @@ export const routingApi = createApi({
               destinationChain: tokenOutChainId,
             }
 
-            const host = 'http://localhost:4000'
-            // const host = 'https://api.peaze.com'
+            // const host = 'http://localhost:4000'
+            const host = 'https://api.peaze.com'
 
             const request = await axios.request({
               method: 'POST',
@@ -255,32 +254,10 @@ export const routingApi = createApi({
 
             return { data: { ...tradeResult, latencyMs: getQuoteLatencyMeasure(quoteStartMark).duration } }
           } catch (error: any) {
-            console.log({ error })
-            console.warn(
-              `GetQuote failed on Unified Routing API, falling back to client: ${
-                error?.message ?? error?.detail ?? error
-              }`
-            )
-          }
-        }
-        try {
-          const method = fellBack ? QuoteMethod.CLIENT_SIDE_FALLBACK : QuoteMethod.CLIENT_SIDE
-          const router = getRouter(args.tokenInChainId)
-          const quoteResult = await getClientSideQuote(args, router, CLIENT_PARAMS)
-
-          if (quoteResult.state === QuoteState.SUCCESS) {
-            const trade = await transformRoutesToTrade(args, quoteResult.data, method)
-
+            console.warn(`GetQuote failed on client: ${error}`)
             return {
-              data: { ...trade, latencyMs: getQuoteLatencyMeasure(quoteStartMark).duration },
+              error: { status: 'CUSTOM_ERROR', error: error?.detail ?? error?.message ?? error },
             }
-          } else {
-            return { data: { ...quoteResult, latencyMs: getQuoteLatencyMeasure(quoteStartMark).duration } }
-          }
-        } catch (error: any) {
-          console.warn(`GetQuote failed on client: ${error}`)
-          return {
-            error: { status: 'CUSTOM_ERROR', error: error?.detail ?? error?.message ?? error },
           }
         }
       },
