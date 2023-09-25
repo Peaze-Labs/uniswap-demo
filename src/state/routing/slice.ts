@@ -24,7 +24,7 @@ import {
   URAQuoteResponse,
   URAQuoteType,
 } from './types'
-import { isExactInput, shouldUseAPIRouter, transformRoutesToTrade } from './utils'
+import { isExactInput, transformRoutesToTrade } from './utils'
 
 const UNISWAP_API_URL = process.env.REACT_APP_UNISWAP_API_URL
 if (UNISWAP_API_URL === undefined) {
@@ -128,136 +128,134 @@ export const routingApi = createApi({
         let fellBack = false
         logSwapQuoteRequest(args.tokenInChainId, args.routerPreference)
         const quoteStartMark = performance.mark(`quote-fetch-start-${Date.now()}`)
-        if (shouldUseAPIRouter(args)) {
-          fellBack = true
-          try {
-            const {
-              tokenInAddress: mockTokenInAddress,
-              tokenInChainId: mockTokenInChainId,
-              tokenOutAddress,
-              tokenOutChainId,
-              amount,
-              tradeType,
-              account,
-            } = args
-            const type = isExactInput(tradeType) ? 'EXACT_INPUT' : 'EXACT_OUTPUT'
+        fellBack = true
+        try {
+          const {
+            tokenInAddress: mockTokenInAddress,
+            tokenInChainId: mockTokenInChainId,
+            tokenOutAddress,
+            tokenOutChainId,
+            amount,
+            tradeType,
+            account,
+          } = args
+          const type = isExactInput(tradeType) ? 'EXACT_INPUT' : 'EXACT_OUTPUT'
 
-            const requestBody = {
-              tokenInChainId: tokenOutChainId,
-              tokenIn: getUsdcAddressDstChain(tokenOutChainId),
-              tokenOutChainId,
-              tokenOut: tokenOutAddress,
-              amount,
-              type,
-              configs: getRoutingAPIConfig(args),
-            }
+          const requestBody = {
+            tokenInChainId: tokenOutChainId,
+            tokenIn: getUsdcAddressDstChain(tokenOutChainId),
+            tokenOutChainId,
+            tokenOut: tokenOutAddress,
+            amount,
+            type,
+            configs: getRoutingAPIConfig(args),
+          }
 
-            const response = await fetch({
-              method: 'POST',
-              url: '/quote',
-              body: JSON.stringify(requestBody),
-            })
+          const response = await fetch({
+            method: 'POST',
+            url: '/quote',
+            body: JSON.stringify(requestBody),
+          })
 
-            if (response.error) {
-              try {
-                // cast as any here because we do a runtime check on it being an object before indexing into .errorCode
-                const errorData = response.error.data as any
-                // NO_ROUTE should be treated as a valid response to prevent retries.
-                if (
-                  typeof errorData === 'object' &&
-                  (errorData?.errorCode === 'NO_ROUTE' || errorData?.detail === 'No quotes available')
-                ) {
-                  sendAnalyticsEvent('No quote received from routing API', {
-                    requestBody,
-                    response,
-                    routerPreference: args.routerPreference,
-                  })
-                  return {
-                    data: { state: QuoteState.NOT_FOUND, latencyMs: getQuoteLatencyMeasure(quoteStartMark).duration },
-                  }
+          if (response.error) {
+            try {
+              // cast as any here because we do a runtime check on it being an object before indexing into .errorCode
+              const errorData = response.error.data as any
+              // NO_ROUTE should be treated as a valid response to prevent retries.
+              if (
+                typeof errorData === 'object' &&
+                (errorData?.errorCode === 'NO_ROUTE' || errorData?.detail === 'No quotes available')
+              ) {
+                sendAnalyticsEvent('No quote received from routing API', {
+                  requestBody,
+                  response,
+                  routerPreference: args.routerPreference,
+                })
+                return {
+                  data: { state: QuoteState.NOT_FOUND, latencyMs: getQuoteLatencyMeasure(quoteStartMark).duration },
                 }
-              } catch {
-                throw response.error
               }
+            } catch {
+              throw response.error
             }
+          }
 
-            const uraQuoteResponse = response.data as URAQuoteResponse
-            const tradeResult = await transformRoutesToTrade(args, uraQuoteResponse, QuoteMethod.ROUTING_API)
+          const uraQuoteResponse = response.data as URAQuoteResponse
+          const tradeResult = await transformRoutesToTrade(args, uraQuoteResponse, QuoteMethod.ROUTING_API)
 
-            if (!tradeResult.trade) {
-              window.alert('need to figure out how to handle now trade from API')
-              throw new Error('need to figure out how to handle no trade from API')
-            } else if (tradeResult.trade.fillType !== TradeFillType.Classic) {
-              window.alert('trade fill type was not classic')
-              throw new Error('trade fill type was not classic')
-            }
+          if (!tradeResult.trade) {
+            window.alert('need to figure out how to handle now trade from API')
+            throw new Error('need to figure out how to handle no trade from API')
+          } else if (tradeResult.trade.fillType !== TradeFillType.Classic) {
+            window.alert('trade fill type was not classic')
+            throw new Error('trade fill type was not classic')
+          }
 
-            const { calldata: data, value } = SwapRouter.swapERC20CallParameters(tradeResult.trade, {
-              slippageTolerance: new Percent(5, 1000),
-            })
+          const { calldata: data, value } = SwapRouter.swapERC20CallParameters(tradeResult.trade, {
+            slippageTolerance: new Percent(5, 1000),
+          })
 
-            const permit2Address = '0x000000000022D473030F116dDEE9F6B43aC78BA3'
+          const permit2Address = '0x000000000022D473030F116dDEE9F6B43aC78BA3'
 
-            const tokenInterface = new Interface(['function approve(address,uint256)'])
-            const permit2Interface = new Interface([
-              'function approve(address token, address spender, uint160 amount, uint48 expiration)',
-            ])
+          const tokenInterface = new Interface(['function approve(address,uint256)'])
+          const permit2Interface = new Interface([
+            'function approve(address token, address spender, uint160 amount, uint48 expiration)',
+          ])
 
-            const permit2ApprovalData = permit2Interface.encodeFunctionData('approve', [
-              getUsdcAddressDstChain(tokenOutChainId),
-              UNIVERSAL_ROUTER_ADDRESS(tokenOutChainId),
-              BigInt(amount) * 2n,
-              281_474_976_710_655,
-            ])
+          const permit2ApprovalData = permit2Interface.encodeFunctionData('approve', [
+            getUsdcAddressDstChain(tokenOutChainId),
+            UNIVERSAL_ROUTER_ADDRESS(tokenOutChainId),
+            BigInt(amount) * 2n,
+            281_474_976_710_655,
+          ])
 
-            if (!account || !tokenOutAddress || !getUsdcAddressDstChain(tokenOutChainId)) {
-              return { data: { ...tradeResult, latencyMs: getQuoteLatencyMeasure(quoteStartMark).duration } }
-            }
-
-            const estimateRequestBody = {
-              transactions: [
-                {
-                  to: getUsdcAddressDstChain(tokenOutChainId),
-                  data: tokenInterface.encodeFunctionData('approve', [permit2Address, 10n ** 18n]),
-                },
-                // Permit universal router to use permit2 contract
-                {
-                  to: permit2Address,
-                  data: permit2ApprovalData,
-                },
-                {
-                  to: UNIVERSAL_ROUTER_ADDRESS(tokenOutChainId),
-                  data,
-                },
-              ],
-              userAddress: account,
-              sourceToken: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174', // USDC on polygon
-              tokenAmount: amount,
-              sourceChain: 137,
-              destinationChain: tokenOutChainId,
-            }
-
-            // const host = 'http://localhost:4000'
-            const host = 'https://api.peaze.com'
-
-            const request = await axios.request({
-              method: 'POST',
-              url: `${host}/api/v1/transactions/estimate`,
-              data: estimateRequestBody,
-              headers: {
-                'Content-Type': 'application/json',
-                'X-Api-Key': 'bfdf4627-9767-4f93-961a-a27ac2f02955',
-              },
-            })
-
-            console.log({ request, estimateRequestBody })
-
+          if (!account || !tokenOutAddress || !getUsdcAddressDstChain(tokenOutChainId)) {
             return { data: { ...tradeResult, latencyMs: getQuoteLatencyMeasure(quoteStartMark).duration } }
-          } catch (error: any) {
-            console.warn(`GetQuote failed on client: ${error}`)
-            return {
-              error: { status: 'CUSTOM_ERROR', error: error?.detail ?? error?.message ?? error },
-            }
+          }
+
+          const estimateRequestBody = {
+            transactions: [
+              {
+                to: getUsdcAddressDstChain(tokenOutChainId),
+                data: tokenInterface.encodeFunctionData('approve', [permit2Address, 10n ** 18n]),
+              },
+              // Permit universal router to use permit2 contract
+              {
+                to: permit2Address,
+                data: permit2ApprovalData,
+              },
+              {
+                to: UNIVERSAL_ROUTER_ADDRESS(tokenOutChainId),
+                data,
+              },
+            ],
+            userAddress: account,
+            sourceToken: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174', // USDC on polygon
+            tokenAmount: amount,
+            sourceChain: 137,
+            destinationChain: tokenOutChainId,
+          }
+
+          // const host = 'http://localhost:4000'
+          const host = 'https://api.peaze.com'
+
+          const request = await axios.request({
+            method: 'POST',
+            url: `${host}/api/v1/transactions/estimate`,
+            data: estimateRequestBody,
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Api-Key': 'bfdf4627-9767-4f93-961a-a27ac2f02955',
+            },
+          })
+
+          console.log({ request, estimateRequestBody })
+
+          return { data: { ...tradeResult, latencyMs: getQuoteLatencyMeasure(quoteStartMark).duration } }
+        } catch (error: any) {
+          console.warn(`GetQuote failed on client: ${error}`)
+          return {
+            error: { status: 'CUSTOM_ERROR', error: error?.detail ?? error?.message ?? error },
           }
         }
       },
