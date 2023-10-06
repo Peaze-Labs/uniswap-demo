@@ -18,3 +18,16 @@ export function getUsdcAddressDstChain(dstChainId: number): string {
       return ''
   }
 }
+
+export function getDAIAddressDstChain(dstChainId: number): string {
+  switch (dstChainId) {
+    case 137:
+      return '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063'
+    case 10:
+      return '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1'
+    case 1:
+      return '0x6B175474E89094C44Da98b954EedeAC495271d0F'
+    default:
+      return ''
+  }
+}

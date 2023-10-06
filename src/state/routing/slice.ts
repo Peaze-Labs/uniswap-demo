@@ -3,10 +3,11 @@ import { Protocol } from '@uniswap/router-sdk'
 import { Percent, TradeType } from '@uniswap/sdk-core'
 import { SwapRouter, UNIVERSAL_ROUTER_ADDRESS } from '@uniswap/universal-router-sdk'
 import { sendAnalyticsEvent } from 'analytics'
-import axios from 'axios'
 import { isUniswapXSupportedChain } from 'constants/chains'
 import { Interface } from 'ethers/lib/utils'
 import ms from 'ms'
+import { peazeAxios } from 'state/peaze/api'
+import { peazeStore } from 'state/peaze/store'
 import { logSwapQuoteRequest } from 'tracing/swapFlowLoggers'
 import { trace } from 'tracing/trace'
 import { getUsdcAddressDstChain } from 'utils/chains'
@@ -125,10 +126,9 @@ export const routingApi = createApi({
         )
       },
       async queryFn(args, _api, _extraOptions, fetch) {
-        let fellBack = false
         logSwapQuoteRequest(args.tokenInChainId, args.routerPreference)
         const quoteStartMark = performance.mark(`quote-fetch-start-${Date.now()}`)
-        fellBack = true
+
         try {
           const {
             tokenInAddress: mockTokenInAddress,
@@ -202,21 +202,24 @@ export const routingApi = createApi({
             'function approve(address token, address spender, uint160 amount, uint48 expiration)',
           ])
 
+          const sourceChainId = 137
+          const targetUSDC = getUsdcAddressDstChain(tokenOutChainId)
+
           const permit2ApprovalData = permit2Interface.encodeFunctionData('approve', [
-            getUsdcAddressDstChain(tokenOutChainId),
+            targetUSDC,
             UNIVERSAL_ROUTER_ADDRESS(tokenOutChainId),
             BigInt(amount) * 2n,
             281_474_976_710_655,
           ])
 
-          if (!account || !tokenOutAddress || !getUsdcAddressDstChain(tokenOutChainId)) {
+          if (!account || !tokenOutAddress || !targetUSDC) {
             return { data: { ...tradeResult, latencyMs: getQuoteLatencyMeasure(quoteStartMark).duration } }
           }
 
           const estimateRequestBody = {
             transactions: [
               {
-                to: getUsdcAddressDstChain(tokenOutChainId),
+                to: targetUSDC,
                 data: tokenInterface.encodeFunctionData('approve', [permit2Address, 10n ** 18n]),
               },
               // Permit universal router to use permit2 contract
@@ -232,22 +235,16 @@ export const routingApi = createApi({
             userAddress: account,
             sourceToken: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174', // USDC on polygon
             tokenAmount: amount,
-            sourceChain: 137,
+            sourceChain: sourceChainId,
             destinationChain: tokenOutChainId,
+            expectedERC20Tokens: tokenOutChainId !== sourceChainId ? [targetUSDC] : undefined,
           }
 
-          // const host = 'http://localhost:4000'
-          const host = 'https://api.peaze.com'
+          const URL = tokenOutChainId === sourceChainId ? '/v1/single-chain/estimate' : '/v1/cross-chain/estimate'
 
-          const request = await axios.request({
-            method: 'POST',
-            url: `${host}/api/v1/transactions/estimate`,
-            data: estimateRequestBody,
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Api-Key': 'bfdf4627-9767-4f93-961a-a27ac2f02955',
-            },
-          })
+          const request = await peazeAxios.post(URL, estimateRequestBody)
+
+          peazeStore.setState({ estimateRequest: estimateRequestBody, estimateResult: request.data })
 
           console.log({ request, estimateRequestBody })
 

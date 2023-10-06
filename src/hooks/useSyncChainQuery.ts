@@ -3,6 +3,7 @@ import { CHAIN_IDS_TO_NAMES, isSupportedChain } from 'constants/chains'
 import { ParsedQs } from 'qs'
 import { useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { peazeStore } from 'state/peaze/store'
 
 import useParsedQueryString from './useParsedQueryString'
 import useSelectChain from './useSelectChain'
@@ -25,14 +26,19 @@ export default function useSyncChainQuery() {
   const parsedQs = useParsedQueryString()
   const chainIdRef = useRef(chainId)
   const accountRef = useRef(account)
+  const { isPeazeSigning } = peazeStore()
 
   useEffect(() => {
+    if (isPeazeSigning) {
+      return
+    }
+
     // Update chainIdRef when the account is retrieved from Web3React
     if (account && account !== accountRef.current) {
       chainIdRef.current = chainId
       accountRef.current = account
     }
-  }, [account, chainId])
+  }, [account, chainId, isPeazeSigning])
 
   const urlChainId = getParsedChainId(parsedQs)
 
@@ -41,22 +47,27 @@ export default function useSyncChainQuery() {
   const [searchParams, setSearchParams] = useSearchParams()
 
   useEffect(() => {
+    if (isPeazeSigning) {
+      return
+    }
+
     // Change a user's chain on pageload if the connected chainId does not match the query param chain
     if (isActive && urlChainId && chainIdRef.current === chainId && chainId !== urlChainId) {
       selectChain(urlChainId)
     }
     // If a user has a connected wallet and has manually changed their chain, update the query parameter if it's supported
     else if (account && chainIdRef.current !== chainId && chainId !== urlChainId) {
-      if (isSupportedChain(chainId)) {
+      if (isSupportedChain(chainId) && !isPeazeSigning) {
         searchParams.set('chain', CHAIN_IDS_TO_NAMES[chainId])
       } else {
         searchParams.delete('chain')
       }
-      setSearchParams(searchParams)
+
+      if (!isPeazeSigning) setSearchParams(searchParams)
     }
     // If a user has a connected wallet and the chainId matches the query param chain, update the chainIdRef
     else if (isActive && chainId === urlChainId) {
       chainIdRef.current = urlChainId
     }
-  }, [urlChainId, selectChain, searchParams, isActive, chainId, account, setSearchParams])
+  }, [urlChainId, selectChain, searchParams, isActive, chainId, account, setSearchParams, isPeazeSigning])
 }

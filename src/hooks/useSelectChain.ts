@@ -7,6 +7,7 @@ import { useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { addPopup, PopupType } from 'state/application/reducer'
 import { useAppDispatch } from 'state/hooks'
+import { peazeStore } from 'state/peaze/store'
 
 import { useSwitchChain } from './useSwitchChain'
 
@@ -15,6 +16,7 @@ export default function useSelectChain() {
   const { connector } = useWeb3React()
   const switchChain = useSwitchChain()
   const [searchParams, setSearchParams] = useSearchParams()
+  const { isPeazeSigning } = peazeStore()
 
   return useCallback(
     async (targetChain: ChainId) => {
@@ -24,8 +26,9 @@ export default function useSelectChain() {
 
       try {
         await switchChain(connector, targetChain)
-        if (isSupportedChain(targetChain)) {
+        if (isSupportedChain(targetChain) && !isPeazeSigning) {
           searchParams.set('chain', CHAIN_IDS_TO_NAMES[targetChain])
+
           setSearchParams(searchParams)
         }
       } catch (error) {
@@ -40,6 +43,6 @@ export default function useSelectChain() {
         }
       }
     },
-    [connector, dispatch, searchParams, setSearchParams, switchChain]
+    [connector, dispatch, searchParams, setSearchParams, switchChain, isPeazeSigning]
   )
 }

@@ -22,13 +22,14 @@ import useWrapCallback from 'hooks/useWrapCallback'
 import useNativeCurrency from 'lib/hooks/useNativeCurrency'
 import { getPriceUpdateBasisPoints } from 'lib/utils/analytics'
 import { useCallback, useEffect, useState } from 'react'
+import { peazeStore } from 'state/peaze/store'
 import { InterfaceTrade, TradeFillType } from 'state/routing/types'
 import { Field } from 'state/swap/actions'
 import { useIsTransactionConfirmed, useSwapTransactionStatus } from 'state/transactions/hooks'
 import styled from 'styled-components'
 import { ThemedText } from 'theme'
 import invariant from 'tiny-invariant'
-import { isL2ChainId } from 'utils/chains'
+import { getUsdcAddressDstChain, isL2ChainId } from 'utils/chains'
 import { NumberType, useFormatter } from 'utils/formatNumbers'
 import { formatSwapPriceUpdatedEventProperties } from 'utils/loggingFormatters'
 import { didUserReject } from 'utils/swapErrorToUserReadableMessage'
@@ -289,7 +290,7 @@ export default function ConfirmSwapModal({
   fiatValueInput: { data?: number; isLoading: boolean }
   fiatValueOutput: { data?: number; isLoading: boolean }
 }) {
-  const { chainId } = useWeb3React()
+  const { chainId, provider } = useWeb3React()
   const doesTradeDiffer = originalTrade && tradeMeaningfullyDiffers(trade, originalTrade, allowedSlippage)
   const { startSwapFlow, onCancel, confirmModalState, approvalError, pendingModalSteps, wrapTxHash } =
     useConfirmModalState({
@@ -300,6 +301,66 @@ export default function ConfirmSwapModal({
       allowance,
       doesTradeDiffer: Boolean(doesTradeDiffer),
     })
+
+  const { setPeazeSigning } = peazeStore()
+
+  const handlePeazeExecute = async () => {
+    const { estimateRequest, estimateResult } = peazeStore.getState()
+
+    if (!provider) {
+      throw new Error('handlePeazeExecute(): provider is null')
+    }
+    if (!estimateRequest || !estimateResult) {
+      throw new Error('handlePeazeExecute(): estimateRequest or estimateResult is null')
+    }
+
+    setPeazeSigning(true)
+
+    const {
+      typedData: { td712, td2612 },
+      costSummary: { gasCostInWei },
+    } = estimateResult
+    const signer = provider.getSigner()
+
+    // Switch back to source chain
+    await provider.send('wallet_switchEthereumChain', [{ chainId: `0x${td712.domain.chainId.toString(16)}` }])
+
+    const sig712 = await signer._signTypedData(td712.domain, td712.types, td712.message)
+    const sig2612 = await signer._signTypedData(td2612.domain, td2612.types, td2612.message)
+
+    // Switch back to desitnation chain
+    await provider.send('wallet_switchEthereumChain', [
+      { chainId: `0x${estimateRequest.destinationChain.toString(16)}` },
+    ])
+
+    setPeazeSigning(false)
+
+    const txn = {
+      sourceToken: estimateRequest.sourceToken,
+      sourceChain: estimateRequest.sourceChain,
+      destinationToken: getUsdcAddressDstChain(estimateRequest.destinationChain),
+      destinationChain: estimateRequest.destinationChain,
+      gasCostInWei, // for single-chain tx, this will be used to set the gas limit
+      txValue: gasCostInWei, // for cross-chain tx, this will be paid to Stargate during tx
+      signatures: {
+        sig712,
+        sig2612,
+      },
+      message: td712.message,
+      domain: td712.domain,
+    }
+
+    const URL =
+      estimateRequest.sourceChain === estimateRequest.destinationChain
+        ? '/v1/single-chain/execute'
+        : '/v1/cross-chain/execute'
+
+    // const response = await peazeAxios.post(URL, txn)
+
+    // console.log('response.data', response.data)
+
+    console.log('response, result', URL, txn)
+  }
 
   const swapStatus = useSwapTransactionStatus(swapResult)
 
@@ -355,7 +416,7 @@ export default function ConfirmSwapModal({
     if (confirmModalState === ConfirmModalState.REVIEWING || showAcceptChanges) {
       return (
         <SwapModalFooter
-          onConfirm={startSwapFlow}
+          onConfirm={handlePeazeExecute}
           trade={trade}
           swapResult={swapResult}
           allowedSlippage={allowedSlippage}

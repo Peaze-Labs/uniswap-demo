@@ -61,7 +61,7 @@ export function CurrencySearch({
   isOpen,
   onlyShowCurrenciesWithBalance,
 }: CurrencySearchProps) {
-  const { chainId, account } = useWeb3React()
+  const { account, chainId } = useWeb3React()
   const theme = useTheme()
 
   const [tokenLoaderTimerElapsed, setTokenLoaderTimerElapsed] = useState(false)

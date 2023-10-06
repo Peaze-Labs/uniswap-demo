@@ -20,6 +20,7 @@ import { Bag } from './Bag'
 import Blur from './Blur'
 import { ChainSelector } from './ChainSelector'
 import { MenuDropdown } from './MenuDropdown'
+import { PeazeChainSelector } from './PeazeChainSelector'
 import { SearchBar } from './SearchBar'
 import * as styles from './style.css'
 
@@ -122,7 +123,8 @@ const Navbar = ({ blur }: { blur: boolean }) => {
             </Box>
             {!isNftPage && (
               <Box display={{ sm: 'flex', lg: 'none' }}>
-                <ChainSelector leftAlign={true} />
+                <PeazeChainSelector leftAlign={true} />
+                <ChainSelector />
               </Box>
             )}
             <Row display={{ sm: 'none', lg: 'flex' }}>
@@ -145,6 +147,7 @@ const Navbar = ({ blur }: { blur: boolean }) => {
               {isNftPage && sellPageState !== ProfilePageStateType.LISTING && <Bag />}
               {!isNftPage && (
                 <Box display={{ sm: 'none', lg: 'flex' }}>
+                  <PeazeChainSelector leftAlign={true} />
                   <ChainSelector />
                 </Box>
               )}
