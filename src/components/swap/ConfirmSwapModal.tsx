@@ -21,6 +21,7 @@ import useWrapCallback from 'hooks/useWrapCallback'
 import useNativeCurrency from 'lib/hooks/useNativeCurrency'
 import { getPriceUpdateBasisPoints } from 'lib/utils/analytics'
 import { useCallback, useEffect, useState } from 'react'
+import { peazeAxios } from 'state/peaze/api'
 import { usePeazeReact } from 'state/peaze/hooks'
 import { peazeStore } from 'state/peaze/store'
 import { InterfaceTrade, TradeFillType } from 'state/routing/types'
@@ -302,7 +303,7 @@ export default function ConfirmSwapModal({
       doesTradeDiffer: Boolean(doesTradeDiffer),
     })
 
-  const { setPeazeSigning } = peazeStore()
+  const { setPeazeSigningState } = peazeStore()
 
   const handlePeazeExecute = async () => {
     const { estimateRequest, estimateResult } = peazeStore.getState()
@@ -314,7 +315,7 @@ export default function ConfirmSwapModal({
       throw new Error('handlePeazeExecute(): estimateRequest or estimateResult is null')
     }
 
-    setPeazeSigning(true)
+    setPeazeSigningState(true, chainId)
 
     const {
       typedData: { td712, td2612 },
@@ -333,7 +334,7 @@ export default function ConfirmSwapModal({
       { chainId: `0x${estimateRequest.destinationChain.toString(16)}` },
     ])
 
-    setPeazeSigning(false)
+    setPeazeSigningState(false, undefined)
 
     const txn = {
       sourceToken: estimateRequest.sourceToken,
@@ -355,11 +356,11 @@ export default function ConfirmSwapModal({
         ? '/v1/single-chain/execute'
         : '/v1/cross-chain/execute'
 
-    // const response = await peazeAxios.post(URL, txn)
+    const response = await peazeAxios.post(URL, txn)
 
-    // console.log('response.data', response.data)
+    console.log('response.data', response.data)
 
-    console.log('response, result', URL, txn)
+    // TODO: add start tracking transaction hash where other transactions are tracked for UI purposes
   }
 
   const swapStatus = useSwapTransactionStatus(swapResult)

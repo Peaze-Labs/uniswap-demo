@@ -247,10 +247,7 @@ export const routingApi = createApi({
           peazeStore.setState({
             estimateRequest: estimateRequestBody,
             estimateResult: request.data,
-            lockedChainId: tokenOutChainId,
           })
-
-          console.log({ request, estimateRequestBody })
 
           return { data: { ...tradeResult, latencyMs: getQuoteLatencyMeasure(quoteStartMark).duration } }
         } catch (error: any) {

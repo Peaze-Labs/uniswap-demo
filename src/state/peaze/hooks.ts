@@ -7,8 +7,6 @@ export function usePeazeReact() {
   const { isPeazeSigning, lockedChainId } = peazeStore()
   const original = useWeb3React()
 
-  // console.log({ isPeazeSigning, lockedChainId, original })
-
   return useMemo(() => {
     return isPeazeSigning
       ? {
