@@ -6,7 +6,6 @@ import {
   SwapPriceUpdateUserResponse,
 } from '@uniswap/analytics-events'
 import { Currency, Percent } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { sendAnalyticsEvent, Trace, useTrace } from 'analytics'
 import Badge from 'components/Badge'
 import Modal, { MODAL_TRANSITION_DURATION } from 'components/Modal'
@@ -22,6 +21,7 @@ import useWrapCallback from 'hooks/useWrapCallback'
 import useNativeCurrency from 'lib/hooks/useNativeCurrency'
 import { getPriceUpdateBasisPoints } from 'lib/utils/analytics'
 import { useCallback, useEffect, useState } from 'react'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { peazeStore } from 'state/peaze/store'
 import { InterfaceTrade, TradeFillType } from 'state/routing/types'
 import { Field } from 'state/swap/actions'
@@ -115,7 +115,7 @@ function useConfirmModalState({
     return steps
   }, [allowance, trade])
 
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const trace = useTrace()
   const maximumAmountIn = useMaxAmountIn(trade, allowedSlippage)
 
@@ -290,7 +290,7 @@ export default function ConfirmSwapModal({
   fiatValueInput: { data?: number; isLoading: boolean }
   fiatValueOutput: { data?: number; isLoading: boolean }
 }) {
-  const { chainId, provider } = useWeb3React()
+  const { chainId, provider } = usePeazeReact()
   const doesTradeDiffer = originalTrade && tradeMeaningfullyDiffers(trade, originalTrade, allowedSlippage)
   const { startSwapFlow, onCancel, confirmModalState, approvalError, pendingModalSteps, wrapTxHash } =
     useConfirmModalState({

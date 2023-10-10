@@ -1,12 +1,12 @@
 import { Plural, Trans } from '@lingui/macro'
 import { InterfaceElementName, SwapEventName } from '@uniswap/analytics-events'
 import { Percent, TradeType } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { sendAnalyticsEvent } from 'analytics'
 import { LoadingRows } from 'components/Loader/styled'
 import { SUPPORTED_GAS_ESTIMATE_CHAIN_IDS } from 'constants/chains'
 import { ZERO_PERCENT } from 'constants/misc'
 import useNativeCurrency from 'lib/hooks/useNativeCurrency'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { ClassicTrade, InterfaceTrade } from 'state/routing/types'
 import { getTransactionCount, isClassicTrade } from 'state/routing/utils'
 import { formatPriceImpact, NumberType, useFormatter } from 'utils/formatNumbers'
@@ -44,7 +44,7 @@ function TextWithLoadingPlaceholder({
 }
 
 export function AdvancedSwapDetails({ trade, allowedSlippage, syncing = false }: AdvancedSwapDetailsProps) {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const nativeCurrency = useNativeCurrency(chainId)
   const txCount = getTransactionCount(trade)
   const { formatNumber, formatCurrencyAmount } = useFormatter()

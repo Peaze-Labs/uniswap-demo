@@ -1,8 +1,8 @@
 import { screen } from '@testing-library/react'
 import { Currency, CurrencyAmount as mockCurrencyAmount, Token as mockToken } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { DAI, USDC_MAINNET, WBTC } from 'constants/tokens'
 import * as mockJSBI from 'jsbi'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { mocked } from 'test-utils/mocked'
 import { render } from 'test-utils/render'
 
@@ -73,10 +73,10 @@ it('renders currency rows correctly when currencies list is non-empty', () => {
 })
 
 it('renders currency rows correctly with balances', () => {
-  mocked(useWeb3React).mockReturnValue({
+  mocked(usePeazeReact).mockReturnValue({
     account: '0x52270d8234b864dcAC9947f510CE9275A8a116Db',
     isActive: true,
-  } as ReturnType<typeof useWeb3React>)
+  } as ReturnType<typeof usePeazeReact>)
   render(
     <CurrencyList
       height={10}

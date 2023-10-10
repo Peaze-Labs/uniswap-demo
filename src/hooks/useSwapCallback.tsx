@@ -1,7 +1,7 @@
 import { Percent, TradeType } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { PermitSignature } from 'hooks/usePermitAllowance'
 import { useCallback } from 'react'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { InterfaceTrade, TradeFillType } from 'state/routing/types'
 import { isClassicTrade, isUniswapXTrade } from 'state/routing/utils'
 import { useAddOrder } from 'state/signatures/hooks'
@@ -32,7 +32,7 @@ export function useSwapCallback(
 
   const addTransaction = useTransactionAdder()
   const addOrder = useAddOrder()
-  const { account, chainId } = useWeb3React()
+  const { account, chainId } = usePeazeReact()
 
   const uniswapXSwapCallback = useUniswapXSwapCallback({
     trade: isUniswapXTrade(trade) ? trade : undefined,

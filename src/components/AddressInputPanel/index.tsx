@@ -1,8 +1,8 @@
 import { Trans } from '@lingui/macro'
 // eslint-disable-next-line no-restricted-imports
 import { t } from '@lingui/macro'
-import { useWeb3React } from '@web3-react/core'
 import { ChangeEvent, ReactNode, useCallback } from 'react'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled, { useTheme } from 'styled-components'
 import { flexColumnNoWrap } from 'theme/styles'
 
@@ -87,7 +87,7 @@ export default function AddressInputPanel({
   // triggers whenever the typed value changes
   onChange: (value: string) => void
 }) {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const theme = useTheme()
 
   const { address, loading, name } = useENS(value)

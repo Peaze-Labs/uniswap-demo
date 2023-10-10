@@ -1,11 +1,11 @@
 import { Trans } from '@lingui/macro'
 import { Currency, CurrencyAmount, Percent, Token } from '@uniswap/sdk-core'
 import { Pair } from '@uniswap/v2-sdk'
-import { useWeb3React } from '@web3-react/core'
 import JSBI from 'jsbi'
 import tryParseCurrencyAmount from 'lib/utils/tryParseCurrencyAmount'
 import { ReactNode, useCallback } from 'react'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { AppState } from 'state/reducer'
 
 import { useTotalSupply } from '../../hooks/useTotalSupply'
@@ -30,7 +30,7 @@ export function useDerivedBurnInfo(
   }
   error?: ReactNode
 } {
-  const { account } = useWeb3React()
+  const { account } = usePeazeReact()
 
   const { independentField, typedValue } = useBurnState()
 

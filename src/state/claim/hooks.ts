@@ -1,10 +1,10 @@
 import type { TransactionResponse } from '@ethersproject/providers'
 import MerkleDistributorJSON from '@uniswap/merkle-distributor/build/MerkleDistributor.json'
 import { CurrencyAmount, MERKLE_DISTRIBUTOR_ADDRESS, Token } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import JSBI from 'jsbi'
 import { useSingleCallResult } from 'lib/hooks/multicall'
 import { useEffect, useState } from 'react'
+import { usePeazeReact } from 'state/peaze/hooks'
 
 import { UNI } from '../../constants/tokens'
 import { useContract } from '../../hooks/useContract'
@@ -99,7 +99,7 @@ function fetchClaim(account: string): Promise<UserClaimData> {
 // parse distributorContract blob and detect if user has claim data
 // null means we know it does not
 function useUserClaimData(account: string | null | undefined): UserClaimData | null {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
 
   const [claimInfo, setClaimInfo] = useState<{ [account: string]: UserClaimData | null }>({})
 
@@ -138,7 +138,7 @@ export function useUserHasAvailableClaim(account: string | null | undefined): bo
 }
 
 export function useUserUnclaimedAmount(account: string | null | undefined): CurrencyAmount<Token> | undefined {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const userClaimData = useUserClaimData(account)
   const canClaim = useUserHasAvailableClaim(account)
 
@@ -154,7 +154,7 @@ export function useClaimCallback(account: string | null | undefined): {
   claimCallback: () => Promise<string>
 } {
   // get claim data for this account
-  const { provider, chainId } = useWeb3React()
+  const { provider, chainId } = usePeazeReact()
   const claimData = useUserClaimData(account)
 
   // used for popup summary

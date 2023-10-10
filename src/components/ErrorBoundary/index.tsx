@@ -1,11 +1,11 @@
 import { Trans } from '@lingui/macro'
 import * as Sentry from '@sentry/react'
-import { useWeb3React } from '@web3-react/core'
 import { ButtonLight, SmallButtonPrimary } from 'components/Button'
 import { ChevronUpIcon } from 'nft/components/icons'
 import { useIsMobile } from 'nft/hooks'
 import React, { PropsWithChildren, useState } from 'react'
 import { Copy } from 'react-feather'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled from 'styled-components'
 import { isSentryEnabled } from 'utils/env'
 
@@ -218,7 +218,7 @@ const updateServiceWorkerInBackground = async () => {
 }
 
 export default function ErrorBoundary({ children }: PropsWithChildren): JSX.Element {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   return (
     <Sentry.ErrorBoundary
       fallback={({ error, eventId }) => <Fallback error={error} eventId={eventId} />}

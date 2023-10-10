@@ -2,12 +2,12 @@ import { MixedRoute, partitionMixedRouteByProtocol, Protocol, Trade } from '@uni
 import { Currency, CurrencyAmount, Percent, TradeType } from '@uniswap/sdk-core'
 import { Pair } from '@uniswap/v2-sdk'
 import { Pool } from '@uniswap/v3-sdk'
-import { useWeb3React } from '@web3-react/core'
 import { SUPPORTED_GAS_ESTIMATE_CHAIN_IDS } from 'constants/chains'
 import { L2_CHAIN_IDS } from 'constants/chains'
 import JSBI from 'jsbi'
 import useNativeCurrency from 'lib/hooks/useNativeCurrency'
 import { useMemo } from 'react'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { ClassicTrade } from 'state/routing/types'
 
 import useGasPrice from './useGasPrice'
@@ -74,7 +74,7 @@ const MAX_AUTO_SLIPPAGE_TOLERANCE = new Percent(5, 100) // 5%
  * Auto slippage is only relevant for Classic swaps because UniswapX slippage is determined by the backend service
  */
 export default function useClassicAutoSlippageTolerance(trade?: ClassicTrade): Percent {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const onL2 = chainId && L2_CHAIN_IDS.includes(chainId)
   const outputDollarValue = useStablecoinValue(trade?.outputAmount)
   const nativeGasPrice = useGasPrice()

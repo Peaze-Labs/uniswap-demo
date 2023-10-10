@@ -1,6 +1,6 @@
 import { Token } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { useMemo } from 'react'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { PositionDetails } from 'types/position'
 import { hasURL } from 'utils/urlChecks'
 
@@ -24,7 +24,7 @@ function getUniqueAddressesFromPositions(positions: PositionDetails[]): string[]
  * The hope is that this approach removes the cheapest version of the attack without punishing non-malicious url symbols
  */
 export function useFilterPossiblyMaliciousPositions(positions: PositionDetails[]): PositionDetails[] {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const activeTokensList = useDefaultActiveTokens(chainId)
 
   const nonListPositionTokenAddresses = useMemo(

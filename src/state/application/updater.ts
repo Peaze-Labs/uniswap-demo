@@ -1,14 +1,14 @@
-import { useWeb3React } from '@web3-react/core'
 import { asSupportedChain } from 'constants/chains'
 import useDebounce from 'hooks/useDebounce'
 import useIsWindowVisible from 'hooks/useIsWindowVisible'
 import { useEffect, useState } from 'react'
 import { useAppDispatch } from 'state/hooks'
+import { usePeazeReact } from 'state/peaze/hooks'
 
 import { updateChainId } from './reducer'
 
 export default function Updater(): null {
-  const { chainId, provider } = useWeb3React()
+  const { chainId, provider } = usePeazeReact()
   const dispatch = useAppDispatch()
   const windowVisible = useIsWindowVisible()
 

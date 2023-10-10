@@ -1,5 +1,4 @@
 import { InterfaceElementName, SwapEventName } from '@uniswap/analytics-events'
-import { useWeb3React } from '@web3-react/core'
 import { sendAnalyticsEvent } from 'analytics'
 import { Gas } from 'components/Icons/Gas'
 import { LoadingOpacityContainer } from 'components/Loader/styled'
@@ -7,6 +6,7 @@ import { UniswapXRouterIcon } from 'components/RouterLabel/UniswapXRouterLabel'
 import Row, { RowFixed } from 'components/Row'
 import { MouseoverTooltip, TooltipSize } from 'components/Tooltip'
 import { SUPPORTED_GAS_ESTIMATE_CHAIN_IDS } from 'constants/chains'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { InterfaceTrade } from 'state/routing/types'
 import { isUniswapXTrade } from 'state/routing/utils'
 import styled from 'styled-components'
@@ -25,7 +25,7 @@ const StyledGasIcon = styled(Gas)`
 `
 
 export default function GasEstimateTooltip({ trade, loading }: { trade?: InterfaceTrade; loading: boolean }) {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const { formatNumber } = useFormatter()
 
   if (!trade || !chainId || !SUPPORTED_GAS_ESTIMATE_CHAIN_IDS.includes(chainId)) {

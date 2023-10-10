@@ -1,5 +1,4 @@
 import { Trans } from '@lingui/macro'
-import { useWeb3React } from '@web3-react/core'
 import Column from 'components/Column'
 import { ScrollBarStyles } from 'components/Common'
 import Row from 'components/Row'
@@ -11,6 +10,7 @@ import { useSellAsset } from 'nft/hooks'
 import { formatEth, generateTweetForList, pluralize } from 'nft/utils'
 import { useMemo } from 'react'
 import { Twitter, X } from 'react-feather'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled, { css, useTheme } from 'styled-components'
 import { BREAKPOINTS, ThemedText } from 'theme'
 import { NumberType, useFormatter } from 'utils/formatNumbers'
@@ -77,7 +77,7 @@ const TweetRow = styled(Row)`
 export const SuccessScreen = ({ overlayClick }: { overlayClick: () => void }) => {
   const theme = useTheme()
   const sellAssets = useSellAsset((state) => state.sellAssets)
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const nativeCurrency = useNativeCurrency(chainId)
   const { formatCurrencyAmount } = useFormatter()
 

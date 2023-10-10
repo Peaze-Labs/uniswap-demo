@@ -1,6 +1,5 @@
 import { Trans } from '@lingui/macro'
 import { Percent } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { Scrim } from 'components/AccountDrawer'
 import AnimatedDropdown from 'components/AnimatedDropdown'
 import Column, { AutoColumn } from 'components/Column'
@@ -14,6 +13,7 @@ import { useCallback, useMemo, useRef } from 'react'
 import { X } from 'react-feather'
 import { useCloseModal, useModalIsOpen, useToggleSettingsMenu } from 'state/application/hooks'
 import { ApplicationModal } from 'state/application/reducer'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { InterfaceTrade } from 'state/routing/types'
 import { isUniswapXTrade } from 'state/routing/utils'
 import styled from 'styled-components'
@@ -106,7 +106,7 @@ export default function SettingsTab({
   chainId?: number
   trade?: InterfaceTrade
 }) {
-  const { chainId: connectedChainId } = useWeb3React()
+  const { chainId: connectedChainId } = usePeazeReact()
   const showDeadlineSettings = Boolean(chainId && !L2_CHAIN_IDS.includes(chainId))
   const node = useRef<HTMLDivElement | null>(null)
   const isOpen = useModalIsOpen(ApplicationModal.SETTINGS)

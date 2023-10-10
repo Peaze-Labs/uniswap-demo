@@ -1,4 +1,3 @@
-import { useWeb3React } from '@web3-react/core'
 import IconButton from 'components/AccountDrawer/IconButton'
 import { AutoColumn } from 'components/Column'
 import { Settings } from 'components/Icons/Settings'
@@ -7,6 +6,7 @@ import { connections, networkConnection } from 'connection'
 import { ActivationStatus, useActivationState } from 'connection/activate'
 import { isSupportedChain } from 'constants/chains'
 import { useEffect } from 'react'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled from 'styled-components'
 import { ThemedText } from 'theme'
 import { flexColumnNoWrap } from 'theme/styles'
@@ -38,7 +38,7 @@ const PrivacyPolicyWrapper = styled.div`
 `
 
 export default function WalletModal({ openSettings }: { openSettings: () => void }) {
-  const { connector, chainId } = useWeb3React()
+  const { connector, chainId } = usePeazeReact()
 
   const { activationState } = useActivationState()
 

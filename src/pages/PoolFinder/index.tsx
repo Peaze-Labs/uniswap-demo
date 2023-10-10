@@ -1,7 +1,6 @@
 import { Trans } from '@lingui/macro'
 import { InterfacePageName } from '@uniswap/analytics-events'
 import { Currency, CurrencyAmount, Token } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { Trace } from 'analytics'
 import { V2Unsupported } from 'components/V2Unsupported'
 import { useNetworkSupportsV2 } from 'hooks/useNetworkSupportsV2'
@@ -10,6 +9,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Plus } from 'react-feather'
 import { useLocation } from 'react-router'
 import { Text } from 'rebass'
+import { usePeazeReact } from 'state/peaze/hooks'
 
 import { ButtonDropdownLight } from '../../components/Button'
 import { LightCard } from '../../components/Card'
@@ -43,7 +43,7 @@ function useQuery() {
 export default function PoolFinder() {
   const query = useQuery()
 
-  const { account, chainId } = useWeb3React()
+  const { account, chainId } = usePeazeReact()
 
   const [showSearch, setShowSearch] = useState<boolean>(false)
   const [activeField, setActiveField] = useState<number>(Fields.TOKEN1)

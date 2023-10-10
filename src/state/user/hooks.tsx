@@ -1,12 +1,12 @@
 import { Percent, Token, V2_FACTORY_ADDRESSES } from '@uniswap/sdk-core'
 import { computePairAddress, Pair } from '@uniswap/v2-sdk'
-import { useWeb3React } from '@web3-react/core'
 import { L2_CHAIN_IDS } from 'constants/chains'
 import { SupportedLocale } from 'constants/locales'
 import { L2_DEADLINE_FROM_NOW } from 'constants/misc'
 import JSBI from 'jsbi'
 import { useCallback, useMemo } from 'react'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { RouterPreference } from 'state/routing/types'
 import { UserAddedToken } from 'types/tokens'
 
@@ -147,7 +147,7 @@ export function useUserHideClosedPositions(): [boolean, (newHideClosedPositions:
 }
 
 export function useUserTransactionTTL(): [number, (slippage: number) => void] {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const dispatch = useAppDispatch()
   const userDeadline = useAppSelector((state) => state.user.userDeadline)
   const onL2 = Boolean(chainId && L2_CHAIN_IDS.includes(chainId))
@@ -186,7 +186,7 @@ function useUserAddedTokensOnChain(chainId: number | undefined | null): Token[] 
 }
 
 export function useUserAddedTokens(): Token[] {
-  return useUserAddedTokensOnChain(useWeb3React().chainId)
+  return useUserAddedTokensOnChain(usePeazeReact().chainId)
 }
 
 function serializePair(pair: Pair): SerializedPair {
@@ -249,7 +249,7 @@ export function toV2LiquidityToken([tokenA, tokenB]: [Token, Token]): Token {
  * Returns all the pairs of tokens that are tracked by the user for the current chain ID.
  */
 export function useTrackedTokenPairs(): [Token, Token][] {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const tokens = useDefaultActiveTokens(chainId)
 
   // pinned pairs

@@ -244,7 +244,11 @@ export const routingApi = createApi({
 
           const request = await peazeAxios.post(URL, estimateRequestBody)
 
-          peazeStore.setState({ estimateRequest: estimateRequestBody, estimateResult: request.data })
+          peazeStore.setState({
+            estimateRequest: estimateRequestBody,
+            estimateResult: request.data,
+            lockedChainId: tokenOutChainId,
+          })
 
           console.log({ request, estimateRequestBody })
 

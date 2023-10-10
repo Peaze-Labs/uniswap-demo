@@ -5,8 +5,8 @@ import 'jest-styled-components' // adds style diffs to snapshot tests
 import 'polyfills'
 
 import type { createPopper } from '@popperjs/core'
-import { useWeb3React } from '@web3-react/core'
 import failOnConsole from 'jest-fail-on-console'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { Readable } from 'stream'
 import { toBeVisible } from 'test-utils/matchers'
 import { mocked } from 'test-utils/mocked'
@@ -70,7 +70,7 @@ jest.mock('@web3-react/core', () => {
       web3React.initializeConnector(
         (actions: Parameters<typeof web3React.initializeConnector>[0]) => new Empty(actions)
       ),
-    useWeb3React: jest.fn(),
+    usePeazeReact: jest.fn(),
   }
 })
 
@@ -94,8 +94,8 @@ beforeEach(() => {
   // Not mocking this results in multi-second tests when using popper.js.
   mocked(window.getComputedStyle).mockImplementation(() => new CSSStyleDeclaration())
 
-  // Mock useWeb3React to return a chainId of 1 by default.
-  mocked(useWeb3React).mockReturnValue({ chainId: 1 } as ReturnType<typeof useWeb3React>)
+  // Mock usePeazeReact to return a chainId of 1 by default.
+  mocked(usePeazeReact).mockReturnValue({ chainId: 1 } as ReturnType<typeof usePeazeReact>)
 })
 
 /**

@@ -1,7 +1,7 @@
-import { useWeb3React } from '@web3-react/core'
 import { isSupportedChain } from 'constants/chains'
+import { usePeazeReact } from 'state/peaze/hooks'
 
 export default function useAutoRouterSupported(): boolean {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   return isSupportedChain(chainId)
 }

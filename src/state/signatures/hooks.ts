@@ -1,15 +1,15 @@
 import { ChainId } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { UniswapXOrderStatus } from 'lib/hooks/orders/types'
 import { useCallback, useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import { useAppSelector } from 'state/hooks'
+import { usePeazeReact } from 'state/peaze/hooks'
 
 import { addSignature } from './reducer'
 import { SignatureDetails, SignatureType, UniswapXOrderDetails } from './types'
 
 export function useAllSignatures(): { [id: string]: SignatureDetails } {
-  const { account } = useWeb3React()
+  const { account } = usePeazeReact()
   const signatures = useAppSelector((state) => state.signatures) ?? {}
   if (!account || !signatures[account]) return {}
   return signatures[account]

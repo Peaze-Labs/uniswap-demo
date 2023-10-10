@@ -1,5 +1,4 @@
 import { getVersionUpgrade, VersionUpgrade } from '@uniswap/token-lists'
-import { useWeb3React } from '@web3-react/core'
 import { DEFAULT_LIST_OF_LISTS, UNSUPPORTED_LIST_URLS } from 'constants/lists'
 import TokenSafetyLookupTable from 'constants/tokenSafetyLookup'
 import { useStateRehydrated } from 'hooks/useStateRehydrated'
@@ -8,6 +7,7 @@ import ms from 'ms'
 import { useCallback, useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { useAllLists } from 'state/lists/hooks'
+import { usePeazeReact } from 'state/peaze/hooks'
 
 import { useFetchListCallback } from '../../hooks/useFetchListCallback'
 import useIsWindowVisible from '../../hooks/useIsWindowVisible'
@@ -15,7 +15,7 @@ import { acceptListUpdate } from './actions'
 import { shouldAcceptVersionUpdate } from './utils'
 
 export default function Updater(): null {
-  const { provider } = useWeb3React()
+  const { provider } = usePeazeReact()
   const dispatch = useAppDispatch()
   const isWindowVisible = useIsWindowVisible()
 

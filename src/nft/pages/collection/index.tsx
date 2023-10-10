@@ -1,5 +1,4 @@
 import { InterfacePageName } from '@uniswap/analytics-events'
-import { useWeb3React } from '@web3-react/core'
 import { Trace } from 'analytics'
 import Column from 'components/Column'
 import { OpacityHoverState } from 'components/Common'
@@ -19,6 +18,7 @@ import { blocklistedCollections } from 'nft/utils'
 import { Suspense, useEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { animated, easings, useSpring } from 'react-spring'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled from 'styled-components'
 import { ThemedText } from 'theme'
 import { TRANSITION_DURATIONS } from 'theme/styles'
@@ -130,7 +130,7 @@ const Collection = () => {
   const setMarketCount = useCollectionFilters((state) => state.setMarketCount)
   const isBagExpanded = useBag((state) => state.bagExpanded)
   const setBagExpanded = useBag((state) => state.setBagExpanded)
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const screenSize = useScreenSize()
 
   const { data: collectionStats, loading } = useCollection(contractAddress as string)

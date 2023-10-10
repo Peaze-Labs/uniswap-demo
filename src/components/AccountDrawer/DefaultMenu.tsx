@@ -1,7 +1,7 @@
-import { useWeb3React } from '@web3-react/core'
 import Column from 'components/Column'
 import WalletModal from 'components/WalletModal'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled from 'styled-components'
 
 import AuthenticatedHeader from './AuthenticatedHeader'
@@ -22,7 +22,7 @@ enum MenuState {
 }
 
 function DefaultMenu({ drawerOpen }: { drawerOpen: boolean }) {
-  const { account } = useWeb3React()
+  const { account } = usePeazeReact()
   const isAuthenticated = !!account
 
   const [menu, setMenu] = useState<MenuState>(MenuState.DEFAULT)

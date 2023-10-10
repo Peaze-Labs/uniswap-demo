@@ -1,8 +1,8 @@
 import { Currency, CurrencyAmount, Percent, TradeType } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { WRAPPED_NATIVE_CURRENCY } from 'constants/tokens'
 import { DebounceSwapQuoteVariant, useDebounceSwapQuoteFlag } from 'featureFlags/flags/debounceSwapQuote'
 import { useMemo } from 'react'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { ClassicTrade, InterfaceTrade, QuoteMethod, RouterPreference, TradeState } from 'state/routing/types'
 import { useRoutingAPITrade } from 'state/routing/useRoutingAPITrade'
 import { useRouterPreference } from 'state/user/hooks'
@@ -67,7 +67,7 @@ export function useDebouncedTrade(
   method?: QuoteMethod
   swapQuoteLatency?: number
 } {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const autoRouterSupported = useAutoRouterSupported()
   const isWindowVisible = useIsWindowVisible()
 

@@ -1,10 +1,10 @@
 import { Trans } from '@lingui/macro'
-import { useWeb3React } from '@web3-react/core'
 import Column from 'components/Column'
 import { LoadingRows } from 'components/Loader/styled'
 import RoutingDiagram from 'components/RoutingDiagram/RoutingDiagram'
 import { SUPPORTED_GAS_ESTIMATE_CHAIN_IDS } from 'constants/chains'
 import useAutoRouterSupported from 'hooks/useAutoRouterSupported'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { ClassicTrade } from 'state/routing/types'
 import { Separator, ThemedText } from 'theme'
 import getRoutingDiagramEntries from 'utils/getRoutingDiagramEntries'
@@ -12,7 +12,7 @@ import getRoutingDiagramEntries from 'utils/getRoutingDiagramEntries'
 import RouterLabel from '../RouterLabel'
 
 export default function SwapRoute({ trade, syncing }: { trade: ClassicTrade; syncing: boolean }) {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const autoRouterSupported = useAutoRouterSupported()
 
   const routes = getRoutingDiagramEntries(trade)

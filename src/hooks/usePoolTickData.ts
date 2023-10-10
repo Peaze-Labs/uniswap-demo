@@ -1,6 +1,5 @@
 import { ChainId, Currency, V3_CORE_FACTORY_ADDRESSES } from '@uniswap/sdk-core'
 import { FeeAmount, nearestUsableTick, Pool, TICK_SPACINGS, tickToPrice } from '@uniswap/v3-sdk'
-import { useWeb3React } from '@web3-react/core'
 import { ZERO_ADDRESS } from 'constants/misc'
 import { useAllV3TicksQuery } from 'graphql/thegraph/__generated__/types-and-hooks'
 import { TickData, Ticks } from 'graphql/thegraph/AllV3TicksQuery'
@@ -9,6 +8,7 @@ import JSBI from 'jsbi'
 import { useSingleContractMultipleData } from 'lib/hooks/multicall'
 import ms from 'ms'
 import { useEffect, useMemo, useState } from 'react'
+import { usePeazeReact } from 'state/peaze/hooks'
 import computeSurroundingTicks from 'utils/computeSurroundingTicks'
 
 import { useTickLens } from './useContract'
@@ -49,7 +49,7 @@ function useTicksFromTickLens(
   // Find nearest valid tick for pool in case tick is not initialized.
   const activeTick = pool?.tickCurrent && tickSpacing ? nearestUsableTick(pool?.tickCurrent, tickSpacing) : undefined
 
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
 
   const poolAddress =
     currencyA && currencyB && feeAmount && poolState === PoolState.EXISTS
@@ -143,7 +143,7 @@ function useTicksFromSubgraph(
   feeAmount: FeeAmount | undefined,
   skip = 0
 ) {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const poolAddress =
     currencyA && currencyB && feeAmount
       ? Pool.getAddress(

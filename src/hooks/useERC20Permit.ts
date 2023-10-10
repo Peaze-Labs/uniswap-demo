@@ -1,10 +1,10 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { splitSignature } from '@ethersproject/bytes'
 import { ChainId, Currency, CurrencyAmount } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import JSBI from 'jsbi'
 import { useSingleCallResult } from 'lib/hooks/multicall'
 import { useMemo, useState } from 'react'
+import { usePeazeReact } from 'state/peaze/hooks'
 
 import { DAI, UNI, USDC_MAINNET } from '../constants/tokens'
 import { useEIP2612Contract } from './useContract'
@@ -114,7 +114,7 @@ export function useERC20Permit(
   state: UseERC20PermitState
   gatherPermitSignature: null | (() => Promise<void>)
 } {
-  const { account, chainId, provider } = useWeb3React()
+  const { account, chainId, provider } = usePeazeReact()
   const tokenAddress = currencyAmount?.currency?.isToken ? currencyAmount.currency.address : undefined
   const eip2612Contract = useEIP2612Contract(tokenAddress)
   const isArgentWallet = useIsArgentWallet()

@@ -1,8 +1,8 @@
 import { Trans } from '@lingui/macro'
 import { CurrencyAmount, Token } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { useCallback, useEffect } from 'react'
 import { Heart, X } from 'react-feather'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled, { keyframes } from 'styled-components'
 
 import tokenLogo from '../../assets/images/token-logo.png'
@@ -54,7 +54,7 @@ const UniToken = styled.img`
 `
 
 export default function ClaimPopup() {
-  const { account } = useWeb3React()
+  const { account } = usePeazeReact()
 
   // dont store these in persisted state yet
   const showClaimPopup: boolean = useShowClaimPopup()

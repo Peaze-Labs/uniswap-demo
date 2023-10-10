@@ -1,6 +1,5 @@
 import { Trans } from '@lingui/macro'
 import { ChainId, Currency, CurrencyAmount, Percent, TradeType } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { useFotAdjustmentsEnabled } from 'featureFlags/flags/fotAdjustments'
 import useAutoSlippageTolerance from 'hooks/useAutoSlippageTolerance'
 import { useDebouncedTrade } from 'hooks/useDebouncedTrade'
@@ -11,6 +10,7 @@ import { ParsedQs } from 'qs'
 import { ReactNode, useCallback, useEffect, useMemo } from 'react'
 import { AnyAction } from 'redux'
 import { useAppDispatch } from 'state/hooks'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { InterfaceTrade, TradeState } from 'state/routing/types'
 import { isClassicTrade, isUniswapXTrade } from 'state/routing/utils'
 import { useUserSlippageToleranceWithDefault } from 'state/user/hooks'
@@ -97,7 +97,7 @@ export type SwapInfo = {
 
 // from the current swap inputs, compute the best trade and return it.
 export function useDerivedSwapInfo(state: SwapState, chainId: ChainId | undefined): SwapInfo {
-  const { account } = useWeb3React()
+  const { account } = usePeazeReact()
 
   const {
     independentField,
@@ -282,7 +282,7 @@ export function queryParametersToSwapState(parsedQs: ParsedQs): SwapState {
 
 // updates the swap state to use the defaults for a given network
 export function useDefaultsFromURLSearch(): SwapState {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const dispatch = useAppDispatch()
   const parsedQs = useParsedQueryString()
 

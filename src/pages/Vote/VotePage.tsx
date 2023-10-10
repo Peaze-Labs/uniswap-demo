@@ -2,7 +2,6 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { Trans } from '@lingui/macro'
 import { InterfacePageName } from '@uniswap/analytics-events'
 import { CurrencyAmount, Fraction, Token } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { Trace } from 'analytics'
 import ExecuteModal from 'components/vote/ExecuteModal'
 import QueueModal from 'components/vote/QueueModal'
@@ -15,6 +14,7 @@ import { useState } from 'react'
 import { ArrowLeft } from 'react-feather'
 import ReactMarkdown from 'react-markdown'
 import { useParams } from 'react-router-dom'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled from 'styled-components'
 
 import { ButtonPrimary } from '../../components/Button'
@@ -166,7 +166,7 @@ export default function VotePage() {
   const { governorIndex, id } = useParams() as { governorIndex: string; id: string }
   const parsedGovernorIndex = Number.parseInt(governorIndex)
 
-  const { chainId, account } = useWeb3React()
+  const { chainId, account } = usePeazeReact()
 
   const quorumAmount = useQuorum(parsedGovernorIndex)
 

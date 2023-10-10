@@ -4,7 +4,6 @@ import type { TransactionResponse } from '@ethersproject/providers'
 import { Trans } from '@lingui/macro'
 import { BrowserEvent, InterfaceElementName, InterfaceEventName, LiquidityEventName } from '@uniswap/analytics-events'
 import { Currency, Percent } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { sendAnalyticsEvent, TraceEvent, useTrace } from 'analytics'
 import { useToggleAccountDrawer } from 'components/AccountDrawer'
 import { V2Unsupported } from 'components/V2Unsupported'
@@ -16,6 +15,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { ArrowDown, Plus } from 'react-feather'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Text } from 'rebass'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { useTheme } from 'styled-components'
 
 import { ButtonConfirmed, ButtonError, ButtonLight, ButtonPrimary } from '../../components/Button'
@@ -51,7 +51,7 @@ import { ClickableText, MaxButton, Wrapper } from '../Pool/styled'
 const DEFAULT_REMOVE_LIQUIDITY_SLIPPAGE_TOLERANCE = new Percent(5, 100)
 
 export default function RemoveLiquidityWrapper() {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   if (isSupportedChain(chainId)) {
     return <RemoveLiquidity />
   } else {
@@ -63,7 +63,7 @@ function RemoveLiquidity() {
   const navigate = useNavigate()
   const { currencyIdA, currencyIdB } = useParams<{ currencyIdA: string; currencyIdB: string }>()
   const [currencyA, currencyB] = [useCurrency(currencyIdA) ?? undefined, useCurrency(currencyIdB) ?? undefined]
-  const { account, chainId, provider } = useWeb3React()
+  const { account, chainId, provider } = usePeazeReact()
   const [tokenA, tokenB] = useMemo(() => [currencyA?.wrapped, currencyB?.wrapped], [currencyA, currencyB])
 
   const theme = useTheme()

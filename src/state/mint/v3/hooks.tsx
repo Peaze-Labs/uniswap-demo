@@ -11,13 +11,13 @@ import {
   TickMath,
   tickToPrice,
 } from '@uniswap/v3-sdk'
-import { useWeb3React } from '@web3-react/core'
 import { usePool } from 'hooks/usePools'
 import JSBI from 'jsbi'
 import tryParseCurrencyAmount from 'lib/utils/tryParseCurrencyAmount'
 import { ReactNode, useCallback, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { getTickToPrice } from 'utils/getTickToPrice'
 
 import { BIG_INT_ZERO } from '../../../constants/misc'
@@ -137,7 +137,7 @@ export function useV3DerivedMintInfo(
   invertPrice: boolean
   ticksAtLimit: { [bound in Bound]?: boolean | undefined }
 } {
-  const { account } = useWeb3React()
+  const { account } = usePeazeReact()
 
   const { independentField, typedValue, leftRangeTypedValue, rightRangeTypedValue, startPriceTypedValue } =
     useV3MintState()

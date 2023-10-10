@@ -1,8 +1,8 @@
 import { Trans } from '@lingui/macro'
 import { ChainId } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { getChainInfoOrDefault, L2ChainInfo } from 'constants/chainInfo'
 import { AlertTriangle } from 'react-feather'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled from 'styled-components'
 import { ExternalLink, MEDIA_WIDTHS } from 'theme'
 
@@ -49,7 +49,7 @@ const Wrapper = styled.div`
 `
 
 export function ChainConnectivityWarning() {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const info = getChainInfoOrDefault(chainId)
   const label = info?.label
 

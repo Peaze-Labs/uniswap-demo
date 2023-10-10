@@ -2,7 +2,6 @@
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import { BrowserEvent, InterfaceElementName, InterfaceEventName, InterfaceSectionName } from '@uniswap/analytics-events'
-import { useWeb3React } from '@web3-react/core'
 import { sendAnalyticsEvent, Trace, TraceEvent, useTrace } from 'analytics'
 import clsx from 'clsx'
 import { Search } from 'components/Icons/Search'
@@ -20,6 +19,7 @@ import { useIsMobile, useIsTablet } from 'nft/hooks'
 import { useIsNavSearchInputVisible } from 'nft/hooks/useIsNavSearchInputVisible'
 import { ChangeEvent, useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled from 'styled-components'
 
 import { ChevronLeftIcon, NavMagnifyingGlassIcon } from '../../nft/components/icons'
@@ -61,7 +61,7 @@ export const SearchBar = () => {
 
   const { data: collections, loading: collectionsAreLoading } = useCollectionSearch(debouncedSearchValue)
 
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const { data: tokens, loading: tokensAreLoading } = useSearchTokens(debouncedSearchValue, chainId ?? 1)
 
   const isNFTPage = useIsNftPage()

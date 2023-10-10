@@ -4,7 +4,6 @@ import { Trans } from '@lingui/macro'
 import { LiquidityEventName, LiquiditySource } from '@uniswap/analytics-events'
 import { CurrencyAmount, Percent } from '@uniswap/sdk-core'
 import { NonfungiblePositionManager } from '@uniswap/v3-sdk'
-import { useWeb3React } from '@web3-react/core'
 import { sendAnalyticsEvent, useTrace } from 'analytics'
 import RangeBadge from 'components/Badge/RangeBadge'
 import { ButtonConfirmed, ButtonPrimary } from 'components/Button'
@@ -30,6 +29,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { Navigate, useLocation, useParams } from 'react-router-dom'
 import { Text } from 'rebass'
 import { useBurnV3ActionHandlers, useBurnV3State, useDerivedV3BurnInfo } from 'state/burn/v3/hooks'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useUserSlippageToleranceWithDefault } from 'state/user/hooks'
 import { useTheme } from 'styled-components'
@@ -48,7 +48,7 @@ const DEFAULT_REMOVE_V3_LIQUIDITY_SLIPPAGE_TOLERANCE = new Percent(5, 100)
 
 // redirect invalid tokenIds
 export default function RemoveLiquidityV3() {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const { tokenId } = useParams<{ tokenId: string }>()
   const location = useLocation()
   const parsedTokenId = useMemo(() => {
@@ -72,7 +72,7 @@ export default function RemoveLiquidityV3() {
 function Remove({ tokenId }: { tokenId: BigNumber }) {
   const { position } = useV3PositionFromTokenId(tokenId)
   const theme = useTheme()
-  const { account, chainId, provider } = useWeb3React()
+  const { account, chainId, provider } = usePeazeReact()
   const trace = useTrace()
 
   // flag for receiving WETH

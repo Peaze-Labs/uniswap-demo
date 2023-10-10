@@ -1,6 +1,5 @@
 import { Trans } from '@lingui/macro'
 import { InterfacePageName } from '@uniswap/analytics-events'
-import { useWeb3React } from '@web3-react/core'
 import { Trace } from 'analytics'
 import CurrencyLogo from 'components/Logo/CurrencyLogo'
 import { AboutSection } from 'components/Tokens/TokenDetails/About'
@@ -33,6 +32,7 @@ import { Swap } from 'pages/Swap'
 import { useCallback, useMemo, useState, useTransition } from 'react'
 import { ArrowLeft } from 'react-feather'
 import { useNavigate } from 'react-router-dom'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { Field } from 'state/swap/actions'
 import { SwapState } from 'state/swap/reducer'
 import styled from 'styled-components'
@@ -76,7 +76,7 @@ function useRelevantToken(
   pageChainId: number,
   tokenQueryData: TokenQueryData | undefined
 ) {
-  const { chainId: activeChainId } = useWeb3React()
+  const { chainId: activeChainId } = usePeazeReact()
   const queryToken = useMemo(() => {
     if (!address) return undefined
     if (address === NATIVE_CHAIN_ID) return nativeOnChain(pageChainId)
@@ -117,7 +117,7 @@ export default function TokenDetails({
     [urlAddress]
   )
 
-  const { chainId: connectedChainId } = useWeb3React()
+  const { chainId: connectedChainId } = usePeazeReact()
   const pageChainId = supportedChainIdFromGQLChain(chain)
   const tokenQueryData = tokenQuery.token
   const crossChainMap = useMemo(

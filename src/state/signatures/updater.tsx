@@ -1,11 +1,11 @@
 import { TradeType } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { DEFAULT_TXN_DISMISS_MS, L2_TXN_DISMISS_MS } from 'constants/misc'
 import { UniswapXBackendOrder, UniswapXOrderStatus } from 'lib/hooks/orders/types'
 import OrderUpdater from 'lib/hooks/orders/updater'
 import { useCallback, useMemo } from 'react'
 import { PopupType } from 'state/application/reducer'
 import { useAppDispatch } from 'state/hooks'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { addTransaction } from 'state/transactions/reducer'
 import { toSerializableReceipt } from 'state/transactions/updater'
 import { isL2ChainId } from 'utils/chains'
@@ -16,7 +16,7 @@ import { updateSignature } from './reducer'
 import { SignatureType, UniswapXOrderDetails } from './types'
 
 export default function Updater() {
-  const { provider } = useWeb3React()
+  const { provider } = usePeazeReact()
   const addPopup = useAddPopup()
   const signatures = useAllSignatures()
 

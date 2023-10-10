@@ -1,10 +1,10 @@
 import { Trans } from '@lingui/macro'
 import { Currency } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { NATIVE_CHAIN_ID } from 'constants/tokens'
 import { CHAIN_ID_TO_BACKEND_NAME } from 'graphql/data/util'
 import { useStablecoinValue } from 'hooks/useStablecoinPrice'
 import useCurrencyBalance from 'lib/hooks/useCurrencyBalance'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled from 'styled-components'
 import { StyledInternalLink } from 'theme'
 import { NumberType, useFormatter } from 'utils/formatNumbers'
@@ -82,7 +82,7 @@ const SwapButton = styled(StyledInternalLink)`
 `
 
 export default function MobileBalanceSummaryFooter({ token }: { token: Currency }) {
-  const { account } = useWeb3React()
+  const { account } = usePeazeReact()
   const balance = useCurrencyBalance(account, token)
   const { formatCurrencyAmount } = useFormatter()
   const formattedBalance = formatCurrencyAmount({

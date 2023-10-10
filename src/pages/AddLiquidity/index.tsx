@@ -4,7 +4,6 @@ import { Trans } from '@lingui/macro'
 import { BrowserEvent, InterfaceElementName, InterfaceEventName, LiquidityEventName } from '@uniswap/analytics-events'
 import { Currency, CurrencyAmount, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES, Percent } from '@uniswap/sdk-core'
 import { FeeAmount, NonfungiblePositionManager } from '@uniswap/v3-sdk'
-import { useWeb3React } from '@web3-react/core'
 import { sendAnalyticsEvent, TraceEvent, useTrace } from 'analytics'
 import { useToggleAccountDrawer } from 'components/AccountDrawer'
 import OwnershipWarning from 'components/addLiquidity/OwnershipWarning'
@@ -24,6 +23,7 @@ import {
   useV3MintActionHandlers,
   useV3MintState,
 } from 'state/mint/v3/hooks'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled, { useTheme } from 'styled-components'
 import { addressesAreEquivalent } from 'utils/addressesAreEquivalent'
 import { WrongChainError } from 'utils/errors'
@@ -83,7 +83,7 @@ const StyledBodyWrapper = styled(BodyWrapper)<{ $hasExistingPosition: boolean }>
 `
 
 export default function AddLiquidityWrapper() {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   if (isSupportedChain(chainId)) {
     return <AddLiquidity />
   } else {
@@ -104,7 +104,7 @@ function AddLiquidity() {
     feeAmount?: string
     tokenId?: string
   }>()
-  const { account, chainId, provider } = useWeb3React()
+  const { account, chainId, provider } = usePeazeReact()
   const theme = useTheme()
   const trace = useTrace()
 

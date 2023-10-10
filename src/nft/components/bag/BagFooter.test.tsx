@@ -2,7 +2,6 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { parseEther } from '@ethersproject/units'
 import { ChainId, CurrencyAmount, Percent } from '@uniswap/sdk-core'
 import { UNIVERSAL_ROUTER_ADDRESS } from '@uniswap/universal-router-sdk'
-import { useWeb3React } from '@web3-react/core'
 import { nativeOnChain } from 'constants/tokens'
 import { getURAddress, useNftUniversalRouterAddress } from 'graphql/data/nft/NftUniversalRouterAddress'
 import { useCurrency } from 'hooks/Tokens'
@@ -15,6 +14,7 @@ import usePayWithAnyTokenSwap from 'nft/hooks/usePayWithAnyTokenSwap'
 import { usePriceImpact } from 'nft/hooks/usePriceImpact'
 import { useTokenInput } from 'nft/hooks/useTokenInput'
 import { BagStatus } from 'nft/types'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { TradeState } from 'state/routing/types'
 import { TEST_TOKEN_1, TEST_TRADE_EXACT_INPUT, toCurrencyAmount } from 'test-utils/constants'
 import { mocked } from 'test-utils/mocked'
@@ -49,10 +49,10 @@ const getBuyButtonWarning = () => screen.queryByTestId('nft-buy-button-warning')
 
 describe('BagFooter.tsx', () => {
   beforeEach(() => {
-    mocked(useWeb3React).mockReturnValue({
+    mocked(usePeazeReact).mockReturnValue({
       chainId: 1,
       account: '0x52270d8234b864dcAC9947f510CE9275A8a116Db',
-    } as ReturnType<typeof useWeb3React>)
+    } as ReturnType<typeof usePeazeReact>)
 
     mocked(useBag).mockReturnValue({
       bagStatus: BagStatus.ADDING_TO_BAG,
@@ -108,10 +108,10 @@ describe('BagFooter.tsx', () => {
   })
 
   it('wallet not connected', () => {
-    mocked(useWeb3React).mockReturnValue({
+    mocked(usePeazeReact).mockReturnValue({
       chainId: 1,
       account: undefined,
-    } as ReturnType<typeof useWeb3React>)
+    } as ReturnType<typeof usePeazeReact>)
 
     renderBagFooter()
     const buyButton = getBuyButton()
@@ -122,10 +122,10 @@ describe('BagFooter.tsx', () => {
   })
 
   it('connected to wrong network', () => {
-    mocked(useWeb3React).mockReturnValue({
+    mocked(usePeazeReact).mockReturnValue({
       chainId: 2,
       account: '0x52270d8234b864dcAC9947f510CE9275A8a116Db',
-    } as ReturnType<typeof useWeb3React>)
+    } as ReturnType<typeof usePeazeReact>)
 
     renderBagFooter()
     const buyButton = getBuyButton()

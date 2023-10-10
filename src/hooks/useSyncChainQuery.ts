@@ -1,8 +1,8 @@
-import { useWeb3React } from '@web3-react/core'
 import { CHAIN_IDS_TO_NAMES, isSupportedChain } from 'constants/chains'
 import { ParsedQs } from 'qs'
 import { useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { peazeStore } from 'state/peaze/store'
 
 import useParsedQueryString from './useParsedQueryString'
@@ -22,7 +22,7 @@ function getParsedChainId(parsedQs?: ParsedQs) {
 }
 
 export default function useSyncChainQuery() {
-  const { chainId, isActive, account } = useWeb3React()
+  const { chainId, isActive, account } = usePeazeReact()
   const parsedQs = useParsedQueryString()
   const chainIdRef = useRef(chainId)
   const accountRef = useRef(account)

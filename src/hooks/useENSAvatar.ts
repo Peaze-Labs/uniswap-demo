@@ -1,9 +1,9 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { hexZeroPad } from '@ethersproject/bytes'
-import { useWeb3React } from '@web3-react/core'
 import { NEVER_RELOAD, useMainnetSingleCallResult } from 'lib/hooks/multicall'
 import uriToHttp from 'lib/utils/uriToHttp'
 import { useEffect, useMemo, useState } from 'react'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { safeNamehash } from 'utils/safeNamehash'
 
 import { isAddress } from '../utils'
@@ -110,7 +110,7 @@ function useERC721Uri(
   enforceOwnership: boolean
 ): { uri?: string; loading: boolean } {
   const idArgument = useMemo(() => [id], [id])
-  const { account } = useWeb3React()
+  const { account } = usePeazeReact()
   const contract = useERC721Contract(contractAddress)
   const owner = useMainnetSingleCallResult(contract, 'ownerOf', idArgument, NEVER_RELOAD)
   const uri = useMainnetSingleCallResult(contract, 'tokenURI', idArgument, NEVER_RELOAD)
@@ -128,7 +128,7 @@ function useERC1155Uri(
   id: string | undefined,
   enforceOwnership: boolean
 ): { uri?: string; loading: boolean } {
-  const { account } = useWeb3React()
+  const { account } = usePeazeReact()
   const idArgument = useMemo(() => [id], [id])
   const accountArgument = useMemo(() => [account || '', id], [account, id])
   const contract = useERC1155Contract(contractAddress)

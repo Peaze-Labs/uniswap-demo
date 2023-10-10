@@ -3,7 +3,6 @@ import { formatEther, parseEther } from '@ethersproject/units'
 import { t, Trans } from '@lingui/macro'
 import { BrowserEvent, InterfaceElementName, NFTEventName } from '@uniswap/analytics-events'
 import { ChainId, Currency, CurrencyAmount, Token } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { sendAnalyticsEvent, TraceEvent } from 'analytics'
 import { useToggleAccountDrawer } from 'components/AccountDrawer'
 import Column from 'components/Column'
@@ -34,6 +33,7 @@ import { BagStatus } from 'nft/types'
 import { ethNumberStandardFormatter, formatWeiToDecimal } from 'nft/utils'
 import { PropsWithChildren, useEffect, useMemo, useState } from 'react'
 import { AlertTriangle, ChevronDown } from 'react-feather'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { InterfaceTrade, TradeFillType, TradeState } from 'state/routing/types'
 import styled, { useTheme } from 'styled-components'
 import { ThemedText } from 'theme'
@@ -268,7 +268,7 @@ interface BagFooterProps {
 export const BagFooter = ({ setModalIsOpen, eventProperties }: BagFooterProps) => {
   const toggleWalletDrawer = useToggleAccountDrawer()
   const theme = useTheme()
-  const { account, chainId, connector } = useWeb3React()
+  const { account, chainId, connector } = usePeazeReact()
   const connected = Boolean(account && chainId)
   const totalEthPrice = useBagTotalEthPrice()
   const { inputCurrency } = useTokenInput(({ inputCurrency }) => ({ inputCurrency }))

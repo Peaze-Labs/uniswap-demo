@@ -2,7 +2,6 @@ import { Trans } from '@lingui/macro'
 import { FeePoolSelectAction, LiquidityEventName } from '@uniswap/analytics-events'
 import { Currency } from '@uniswap/sdk-core'
 import { FeeAmount } from '@uniswap/v3-sdk'
-import { useWeb3React } from '@web3-react/core'
 import { sendAnalyticsEvent, useTrace } from 'analytics'
 import { ButtonGray } from 'components/Button'
 import Card from 'components/Card'
@@ -14,6 +13,7 @@ import usePrevious from 'hooks/usePrevious'
 import { DynamicSection } from 'pages/AddLiquidity/styled'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Box } from 'rebass'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled, { keyframes } from 'styled-components'
 import { ThemedText } from 'theme'
 
@@ -60,7 +60,7 @@ export default function FeeSelector({
   currencyA?: Currency
   currencyB?: Currency
 }) {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const trace = useTrace()
 
   const { isLoading, isError, largestUsageFeeTier, distributions } = useFeeTierDistribution(currencyA, currencyB)

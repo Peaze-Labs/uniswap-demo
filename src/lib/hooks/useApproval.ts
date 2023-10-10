@@ -2,12 +2,12 @@ import { MaxUint256 } from '@ethersproject/constants'
 import type { TransactionResponse } from '@ethersproject/providers'
 import { InterfaceEventName } from '@uniswap/analytics-events'
 import { Currency, CurrencyAmount, Token } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { sendAnalyticsEvent } from 'analytics'
 import { useTokenContract } from 'hooks/useContract'
 import { useTokenAllowance } from 'hooks/useTokenAllowance'
 import { getTokenAddress } from 'lib/utils/analytics'
 import { useCallback, useMemo } from 'react'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { calculateGasMargin } from 'utils/calculateGasMargin'
 
 export enum ApprovalState {
@@ -22,7 +22,7 @@ function useApprovalStateForSpender(
   spender: string | undefined,
   useIsPendingApproval: (token?: Token, spender?: string) => boolean
 ): ApprovalState {
-  const { account } = useWeb3React()
+  const { account } = usePeazeReact()
   const token = amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined
 
   const { tokenAllowance } = useTokenAllowance(token, account ?? undefined, spender)
@@ -54,7 +54,7 @@ export function useApproval(
     | undefined
   >
 ] {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const token = amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined
 
   // check the current approval status

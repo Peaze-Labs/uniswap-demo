@@ -1,8 +1,8 @@
 import { Trans } from '@lingui/macro'
 import { ChainId } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { getChainInfo } from 'constants/chainInfo'
 import { ArrowUpRight } from 'react-feather'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled from 'styled-components'
 import { ExternalLink, HideSmall } from 'theme'
 import { colors } from 'theme/colors'
@@ -163,7 +163,7 @@ function shouldShowAlert(chainId: number | undefined): chainId is NetworkAlertCh
 }
 
 export function NetworkAlert() {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const [darkMode] = useDarkModeManager()
 
   if (!shouldShowAlert(chainId)) {

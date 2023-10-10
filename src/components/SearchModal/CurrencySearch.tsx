@@ -2,7 +2,6 @@
 import { t, Trans } from '@lingui/macro'
 import { InterfaceEventName, InterfaceModalName } from '@uniswap/analytics-events'
 import { Currency, Token } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { Trace } from 'analytics'
 import { useCachedPortfolioBalancesQuery } from 'components/AccountDrawer/PrefetchBalancesWrapper'
 import { supportedChainIdFromGQLChain } from 'graphql/data/util'
@@ -16,6 +15,7 @@ import { ChangeEvent, KeyboardEvent, RefObject, useCallback, useEffect, useMemo,
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
 import { Text } from 'rebass'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled, { useTheme } from 'styled-components'
 import { UserAddedToken } from 'types/tokens'
 
@@ -61,7 +61,7 @@ export function CurrencySearch({
   isOpen,
   onlyShowCurrenciesWithBalance,
 }: CurrencySearchProps) {
-  const { account, chainId } = useWeb3React()
+  const { account, chainId } = usePeazeReact()
   const theme = useTheme()
 
   const [tokenLoaderTimerElapsed, setTokenLoaderTimerElapsed] = useState(false)

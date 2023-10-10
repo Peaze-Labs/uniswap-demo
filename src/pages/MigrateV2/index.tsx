@@ -3,7 +3,6 @@ import { keccak256, pack } from '@ethersproject/solidity'
 import { Trans } from '@lingui/macro'
 import { Token, V2_FACTORY_ADDRESSES } from '@uniswap/sdk-core'
 import { Pair } from '@uniswap/v2-sdk'
-import { useWeb3React } from '@web3-react/core'
 import MigrateSushiPositionCard from 'components/PositionCard/Sushi'
 import MigrateV2PositionCard from 'components/PositionCard/V2'
 import { SwitchLocaleLink } from 'components/SwitchLocaleLink'
@@ -12,6 +11,7 @@ import { useNetworkSupportsV2 } from 'hooks/useNetworkSupportsV2'
 import { PairState, useV2Pairs } from 'hooks/useV2Pairs'
 import { ReactNode, useMemo } from 'react'
 import { Text } from 'rebass'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { useTheme } from 'styled-components'
 
 import { LightCard } from '../../components/Card'
@@ -53,7 +53,7 @@ function toSushiLiquidityToken([tokenA, tokenB]: [Token, Token]): Token {
 
 export default function MigrateV2() {
   const theme = useTheme()
-  const { account, chainId } = useWeb3React()
+  const { account, chainId } = usePeazeReact()
 
   const v2FactoryAddress = chainId ? V2_FACTORY_ADDRESSES[chainId] : undefined
 

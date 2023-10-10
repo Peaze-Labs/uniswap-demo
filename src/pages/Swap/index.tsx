@@ -11,7 +11,6 @@ import {
 import { ChainId, Currency, CurrencyAmount, Percent, Token } from '@uniswap/sdk-core'
 import { TokenInfo } from '@uniswap/token-lists'
 import { UNIVERSAL_ROUTER_ADDRESS } from '@uniswap/universal-router-sdk'
-import { useWeb3React } from '@web3-react/core'
 import { sendAnalyticsEvent, Trace, TraceEvent, useTrace } from 'analytics'
 import { useToggleAccountDrawer } from 'components/AccountDrawer'
 import AddressInputPanel from 'components/AddressInputPanel'
@@ -51,6 +50,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { Text } from 'rebass'
 import { useAppSelector } from 'state/hooks'
 import { WrappedTokenInfo } from 'state/lists/wrappedTokenInfo'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { InterfaceTrade, TradeState } from 'state/routing/types'
 import { isClassicTrade, isUniswapXTrade } from 'state/routing/utils'
 import { Field, forceExactInput, replaceSwapState } from 'state/swap/actions'
@@ -153,7 +153,7 @@ function largerPercentValue(a?: Percent, b?: Percent) {
 }
 
 export default function SwapPage({ className }: { className?: string }) {
-  const { chainId: connectedChainId } = useWeb3React()
+  const { chainId: connectedChainId } = usePeazeReact()
   const loadedUrlParams = useDefaultsFromURLSearch()
 
   const location = useLocation()
@@ -182,7 +182,7 @@ export default function SwapPage({ className }: { className?: string }) {
 /**
  * The swap component displays the swap interface, manages state for the swap, and triggers onchain swaps.
  *
- * In most cases, chainId should refer to the connected chain, i.e. `useWeb3React().chainId`.
+ * In most cases, chainId should refer to the connected chain, i.e. `usePeazeReact().chainId`.
  * However if this component is being used in a context that displays information from a different, unconnected
  * chain (e.g. the TDP), then chainId should refer to the unconnected chain.
  */
@@ -199,7 +199,7 @@ export function Swap({
   onCurrencyChange?: (selected: Pick<SwapState, Field.INPUT | Field.OUTPUT>) => void
   disableTokenInputs?: boolean
 }) {
-  const { account, chainId: connectedChainId, connector } = useWeb3React()
+  const { account, chainId: connectedChainId, connector } = usePeazeReact()
   const trace = useTrace()
 
   // token warning stuff

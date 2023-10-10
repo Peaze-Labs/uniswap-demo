@@ -1,11 +1,11 @@
 import { Trans } from '@lingui/macro'
 import { ChainId, Currency } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import CurrencyLogo from 'components/Logo/CurrencyLogo'
 import { getChainInfo } from 'constants/chainInfo'
 import { asSupportedChain } from 'constants/chains'
 import { useStablecoinValue } from 'hooks/useStablecoinPrice'
 import useCurrencyBalance from 'lib/hooks/useCurrencyBalance'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled, { useTheme } from 'styled-components'
 import { ThemedText } from 'theme'
 import { NumberType, useFormatter } from 'utils/formatNumbers'
@@ -61,7 +61,7 @@ const StyledNetworkLabel = styled.div`
 `
 
 export default function BalanceSummary({ token }: { token: Currency }) {
-  const { account, chainId } = useWeb3React()
+  const { account, chainId } = usePeazeReact()
   const theme = useTheme()
   const { label, color } = getChainInfo(asSupportedChain(chainId) ?? ChainId.MAINNET)
   const balance = useCurrencyBalance(account, token)

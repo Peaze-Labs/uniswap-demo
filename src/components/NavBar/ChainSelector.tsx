@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro'
 import { ChainId } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { showTestnetsAtom } from 'components/AccountDrawer/TestnetsToggle'
 import { MouseoverTooltip } from 'components/Tooltip'
 import { getConnection } from 'connection'
@@ -24,6 +23,7 @@ import { Column, Row } from 'nft/components/Flex'
 import { useIsMobile } from 'nft/hooks'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { AlertTriangle, ChevronDown, ChevronUp } from 'react-feather'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { useTheme } from 'styled-components'
 import { getSupportedChainIdsFromWalletConnectSession } from 'utils/getSupportedChainIdsFromWalletConnectSession'
 
@@ -38,7 +38,7 @@ interface ChainSelectorProps {
 }
 
 function useWalletSupportedChains(): ChainId[] {
-  const { connector } = useWeb3React()
+  const { connector } = usePeazeReact()
 
   const connectionType = getConnection(connector).type
 
@@ -53,7 +53,7 @@ function useWalletSupportedChains(): ChainId[] {
 }
 
 export const ChainSelector = ({ leftAlign }: ChainSelectorProps) => {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const isMobile = useIsMobile()
 

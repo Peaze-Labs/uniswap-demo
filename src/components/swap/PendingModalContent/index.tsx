@@ -1,6 +1,5 @@
 import { t, Trans } from '@lingui/macro'
 import { ChainId, Currency } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { OrderContent } from 'components/AccountDrawer/MiniPortfolio/Activity/OffchainActivityModal'
 import { ColumnCenter } from 'components/Column'
 import Column from 'components/Column'
@@ -10,6 +9,7 @@ import { SwapResult } from 'hooks/useSwapCallback'
 import { useUnmountingAnimation } from 'hooks/useUnmountingAnimation'
 import { UniswapXOrderStatus } from 'lib/hooks/orders/types'
 import { ReactNode, useMemo, useRef } from 'react'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { InterfaceTrade, TradeFillType } from 'state/routing/types'
 import { useOrder } from 'state/signatures/hooks'
 import { UniswapXOrderDetails } from 'state/signatures/types'
@@ -262,7 +262,7 @@ export function PendingModalContent({
   tokenApprovalPending = false,
   revocationPending = false,
 }: PendingModalContentProps) {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
 
   const swapStatus = useSwapTransactionStatus(swapResult)
   const order = useOrder(swapResult?.type === TradeFillType.UniswapX ? swapResult.response.orderHash : '')

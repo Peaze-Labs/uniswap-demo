@@ -1,7 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { parseEther } from '@ethersproject/units'
 import { BrowserEvent, InterfaceElementName, NFTEventName } from '@uniswap/analytics-events'
-import { useWeb3React } from '@web3-react/core'
 import { TraceEvent } from 'analytics'
 import clsx from 'clsx'
 import { OpacityHoverState } from 'components/Common'
@@ -52,6 +51,7 @@ import { applyFiltersFromURL, syncLocalFiltersWithURL } from 'nft/utils/urlParam
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useLocation } from 'react-router-dom'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled, { css } from 'styled-components'
 import { ThemedText } from 'theme'
 
@@ -220,7 +220,7 @@ export const getSortDropdownOptions = (setSortBy: (sortBy: SortBy) => void, hasR
 }
 
 export const CollectionNfts = ({ contractAddress, collectionStats, rarityVerified }: CollectionNftsProps) => {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const traits = useCollectionFilters((state) => state.traits)
   const minPrice = useCollectionFilters((state) => state.minPrice)
   const maxPrice = useCollectionFilters((state) => state.maxPrice)

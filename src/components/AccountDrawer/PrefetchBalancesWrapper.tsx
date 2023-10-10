@@ -1,9 +1,9 @@
-import { useWeb3React } from '@web3-react/core'
 import { usePortfolioBalancesLazyQuery, usePortfolioBalancesQuery } from 'graphql/data/__generated__/types-and-hooks'
 import { GQL_MAINNET_CHAINS } from 'graphql/data/util'
 import usePrevious from 'hooks/usePrevious'
 import { atom, useAtom } from 'jotai'
 import { PropsWithChildren, useCallback, useEffect } from 'react'
+import { usePeazeReact } from 'state/peaze/hooks'
 
 import { usePendingActivity } from './MiniPortfolio/Activity/hooks'
 
@@ -31,7 +31,7 @@ export default function PrefetchBalancesWrapper({
   children,
   shouldFetchOnAccountUpdate,
 }: PropsWithChildren<{ shouldFetchOnAccountUpdate: boolean }>) {
-  const { account } = useWeb3React()
+  const { account } = usePeazeReact()
   const [prefetchPortfolioBalances] = usePortfolioBalancesLazyQuery()
 
   // Use an atom to track unfetched state to avoid duplicating fetches if this component appears multiple times on the page.

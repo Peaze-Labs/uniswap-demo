@@ -1,6 +1,5 @@
 import { BrowserEvent, InterfaceElementName, InterfaceEventName } from '@uniswap/analytics-events'
 import { Currency, CurrencyAmount, Token } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { TraceEvent } from 'analytics'
 import Loader from 'components/Icons/LoadingSpinner'
 import TokenSafetyIcon from 'components/TokenSafety/TokenSafetyIcon'
@@ -11,6 +10,7 @@ import { CSSProperties, MutableRefObject, useCallback, useMemo } from 'react'
 import { Check } from 'react-feather'
 import { FixedSizeList } from 'react-window'
 import { Text } from 'rebass'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled from 'styled-components'
 
 import { useIsUserAddedToken } from '../../../hooks/Tokens'
@@ -122,7 +122,7 @@ export function CurrencyRow({
   eventProperties: Record<string, unknown>
   balance?: CurrencyAmount<Currency>
 }) {
-  const { account } = useWeb3React()
+  const { account } = usePeazeReact()
   const key = currencyKey(currency)
   const customAdded = useIsUserAddedToken(currency)
   const warning = currency.isNative ? null : checkWarning(currency.address)

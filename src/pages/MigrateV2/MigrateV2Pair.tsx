@@ -4,7 +4,6 @@ import { Trans } from '@lingui/macro'
 import { LiquidityEventName, LiquiditySource } from '@uniswap/analytics-events'
 import { CurrencyAmount, Fraction, Percent, Price, Token, V2_FACTORY_ADDRESSES } from '@uniswap/sdk-core'
 import { FeeAmount, Pool, Position, priceToClosestTick, TickMath } from '@uniswap/v3-sdk'
-import { useWeb3React } from '@web3-react/core'
 import { sendAnalyticsEvent, useTrace } from 'analytics'
 import Badge, { BadgeVariant } from 'components/Badge'
 import { ButtonConfirmed } from 'components/Button'
@@ -31,6 +30,7 @@ import { Text } from 'rebass'
 import { useAppDispatch } from 'state/hooks'
 import { Bound, resetMintState } from 'state/mint/v3/actions'
 import { useRangeHopCallbacks, useV3DerivedMintInfo, useV3MintActionHandlers } from 'state/mint/v3/hooks'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { useIsTransactionPending, useTransactionAdder } from 'state/transactions/hooks'
 import { useUserSlippageToleranceWithDefault } from 'state/user/hooks'
 import { useTheme } from 'styled-components'
@@ -126,7 +126,7 @@ function V2PairMigration({
   token0: Token
   token1: Token
 }) {
-  const { chainId, account } = useWeb3React()
+  const { chainId, account } = usePeazeReact()
   const theme = useTheme()
   const v2FactoryAddress = chainId ? V2_FACTORY_ADDRESSES[chainId] : undefined
   const trace = useTrace()
@@ -683,7 +683,7 @@ export default function MigrateV2Pair() {
     }
   }, [dispatch])
 
-  const { chainId, account } = useWeb3React()
+  const { chainId, account } = usePeazeReact()
 
   // get pair contract
   const validatedAddress = isAddress(address)

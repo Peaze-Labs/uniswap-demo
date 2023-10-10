@@ -185,6 +185,7 @@ interface PeazeStore {
   estimateRequest: EsetimateRequest | null
   isPeazeSigning: boolean
   sourceChainId?: ChainId
+  lockedChainId?: ChainId
   setPeazeSigning: (ing: boolean) => unknown
   setSourceChainId: (id?: ChainId) => unknown
 }
@@ -197,7 +198,13 @@ export const peazeStore = create<PeazeStore>()(
         estimateRequest: null,
         isPeazeSigning: false,
         sourceChainId: 137, // optimism
-        setPeazeSigning: (ing) => set((state) => ({ ...state, isPeazeSigning: ing })),
+        lockedChainId: undefined,
+        setPeazeSigning: (ing) =>
+          set((state) => {
+            console.trace('SET PEAZE SIGNING CALLED')
+
+            return { ...state, isPeazeSigning: ing }
+          }),
         setSourceChainId: (id) => set((state) => ({ ...state, sourceChainId: id })),
       }),
       {

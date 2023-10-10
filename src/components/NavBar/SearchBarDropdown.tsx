@@ -1,7 +1,6 @@
 import { Trans } from '@lingui/macro'
 import { InterfaceSectionName, NavBarSearchTypes } from '@uniswap/analytics-events'
 import { ChainId } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { useTrace } from 'analytics'
 import clsx from 'clsx'
 import Badge from 'components/Badge'
@@ -19,6 +18,7 @@ import { subheadSmall } from 'nft/css/common.css'
 import { GenieCollection, TrendingCollection } from 'nft/types'
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled from 'styled-components'
 import { ThemedText } from 'theme'
 
@@ -136,7 +136,7 @@ interface SearchBarDropdownProps {
 
 export const SearchBarDropdown = (props: SearchBarDropdownProps) => {
   const { isLoading } = props
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const showChainComingSoonBadge = chainId && BACKEND_NOT_YET_SUPPORTED_CHAIN_IDS.includes(chainId) && !isLoading
   const logoUri = getChainInfo(chainId)?.logoUrl
 
@@ -198,7 +198,7 @@ function SearchBarDropdownContents({
       : [...Array<GenieCollection>(isNFTPage ? 3 : 2)]
   }, [trendingCollections, isNFTPage, trendingCollectionsAreLoading])
 
-  const { data: trendingTokenData } = useTrendingTokens(useWeb3React().chainId)
+  const { data: trendingTokenData } = useTrendingTokens(usePeazeReact().chainId)
 
   const trendingTokensLength = isTokenPage ? 3 : 2
   const trendingTokens = useMemo(

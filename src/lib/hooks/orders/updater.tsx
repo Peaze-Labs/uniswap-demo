@@ -1,6 +1,6 @@
-import { useWeb3React } from '@web3-react/core'
 import ms from 'ms'
 import { useEffect } from 'react'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { isFinalizedOrder } from 'state/signatures/hooks'
 import { UniswapXOrderDetails } from 'state/signatures/types'
 
@@ -24,7 +24,7 @@ interface UpdaterProps {
 }
 
 export default function OrderUpdater({ pendingOrders, onOrderUpdate }: UpdaterProps): null {
-  const { account } = useWeb3React()
+  const { account } = usePeazeReact()
 
   useEffect(() => {
     async function getOrderStatuses() {

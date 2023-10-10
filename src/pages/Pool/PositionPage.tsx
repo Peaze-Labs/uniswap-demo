@@ -4,7 +4,6 @@ import { Trans } from '@lingui/macro'
 import { InterfacePageName, LiquidityEventName, LiquiditySource } from '@uniswap/analytics-events'
 import { Currency, CurrencyAmount, Fraction, Percent, Price, Token } from '@uniswap/sdk-core'
 import { NonfungiblePositionManager, Pool, Position } from '@uniswap/v3-sdk'
-import { useWeb3React } from '@web3-react/core'
 import { sendAnalyticsEvent, Trace } from 'analytics'
 import Badge from 'components/Badge'
 import { ButtonConfirmed, ButtonGray, ButtonPrimary } from 'components/Button'
@@ -31,6 +30,7 @@ import useNativeCurrency from 'lib/hooks/useNativeCurrency'
 import { PropsWithChildren, useCallback, useMemo, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Bound } from 'state/mint/v3/actions'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { useIsTransactionPending, useTransactionAdder } from 'state/transactions/hooks'
 import styled, { useTheme } from 'styled-components'
 import { ExternalLink, HideExtraSmall, HideSmall, StyledRouterLink, ThemedText } from 'theme'
@@ -370,7 +370,7 @@ export function PositionPageUnsupportedContent() {
 }
 
 export default function PositionPage() {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   if (isSupportedChain(chainId)) {
     return <PositionPageContent />
   } else {
@@ -385,7 +385,7 @@ const PositionLabelRow = styled(RowFixed)({
 
 function PositionPageContent() {
   const { tokenId: tokenIdFromUrl } = useParams<{ tokenId?: string }>()
-  const { chainId, account, provider } = useWeb3React()
+  const { chainId, account, provider } = usePeazeReact()
   const theme = useTheme()
 
   const parsedTokenId = tokenIdFromUrl ? BigNumber.from(tokenIdFromUrl) : undefined

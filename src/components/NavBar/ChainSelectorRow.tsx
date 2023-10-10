@@ -1,9 +1,9 @@
 import { Trans } from '@lingui/macro'
 import { ChainId } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import Loader from 'components/Icons/LoadingSpinner'
 import { getChainInfo } from 'constants/chainInfo'
 import { CheckMarkIcon } from 'nft/components/icons'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled, { useTheme } from 'styled-components'
 
 const LOGO_SIZE = 20
@@ -69,7 +69,7 @@ interface ChainSelectorRowProps {
   isPending: boolean
 }
 export default function ChainSelectorRow({ disabled, targetChain, onSelectChain, isPending }: ChainSelectorRowProps) {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const active = chainId === targetChain
   const chainInfo = getChainInfo(targetChain)
   const label = chainInfo?.label

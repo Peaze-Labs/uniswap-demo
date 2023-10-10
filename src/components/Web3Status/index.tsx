@@ -1,6 +1,5 @@
 import { Trans } from '@lingui/macro'
 import { BrowserEvent, InterfaceElementName, InterfaceEventName } from '@uniswap/analytics-events'
-import { useWeb3React } from '@web3-react/core'
 import { sendAnalyticsEvent, TraceEvent } from 'analytics'
 import PortfolioDrawer, { useAccountDrawer } from 'components/AccountDrawer'
 import { usePendingActivity } from 'components/AccountDrawer/MiniPortfolio/Activity/hooks'
@@ -16,6 +15,7 @@ import { useIsNftClaimAvailable } from 'nft/hooks/useIsNftClaimAvailable'
 import { darken } from 'polished'
 import { useCallback } from 'react'
 import { useAppSelector } from 'state/hooks'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled from 'styled-components'
 import { colors } from 'theme/colors'
 import { flexRowNoWrap } from 'theme/styles'
@@ -128,7 +128,7 @@ const StyledConnectButton = styled.button`
 function Web3StatusInner() {
   const switchingChain = useAppSelector((state) => state.wallets.switchingChain)
   const ignoreWhileSwitchingChain = useCallback(() => !switchingChain, [switchingChain])
-  const { account, connector } = useLast(useWeb3React(), ignoreWhileSwitchingChain)
+  const { account, connector } = useLast(usePeazeReact(), ignoreWhileSwitchingChain)
   const { ENSName } = useENSName(account)
   const connection = getConnection(connector)
 

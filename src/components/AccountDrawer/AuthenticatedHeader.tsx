@@ -1,7 +1,6 @@
 import { Trans } from '@lingui/macro'
 import { BrowserEvent, InterfaceElementName, InterfaceEventName, SharedEventName } from '@uniswap/analytics-events'
 import { CurrencyAmount, Token } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { sendAnalyticsEvent, TraceEvent } from 'analytics'
 import { ButtonEmphasis, ButtonSize, LoadingButtonSpinner, ThemeButton } from 'components/Button'
 import Column from 'components/Column'
@@ -21,6 +20,7 @@ import { useCallback, useState } from 'react'
 import { CreditCard, Info } from 'react-feather'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch } from 'state/hooks'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { updateSelectedWallet } from 'state/user/reducer'
 import styled from 'styled-components'
 import { CopyHelper, ExternalLink, ThemedText } from 'theme'
@@ -150,7 +150,7 @@ const PortfolioDrawerContainer = styled(Column)`
 `
 
 export default function AuthenticatedHeader({ account, openSettings }: { account: string; openSettings: () => void }) {
-  const { connector } = useWeb3React()
+  const { connector } = usePeazeReact()
   const { ENSName } = useENSName(account)
   const dispatch = useAppDispatch()
   const navigate = useNavigate()

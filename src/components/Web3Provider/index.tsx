@@ -1,5 +1,5 @@
 import { CustomUserProperties, InterfaceEventName, WalletConnectionResult } from '@uniswap/analytics-events'
-import { useWeb3React, Web3ReactHooks, Web3ReactProvider } from '@web3-react/core'
+import { Web3ReactHooks, Web3ReactProvider } from '@web3-react/core'
 import { Connector } from '@web3-react/types'
 import { sendAnalyticsEvent, user } from 'analytics'
 import { connections, getConnection } from 'connection'
@@ -10,6 +10,7 @@ import useEagerlyConnect from 'hooks/useEagerlyConnect'
 import usePrevious from 'hooks/usePrevious'
 import { ReactNode, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { useConnectedWallets } from 'state/wallets/hooks'
 import { getCurrentPageFromLocation } from 'utils/urlRoutes'
 import { getWalletMeta } from 'utils/walletMeta'
@@ -28,7 +29,7 @@ export default function Web3Provider({ children }: { children: ReactNode }) {
 
 /** A component to run hooks under the Web3ReactProvider context. */
 function Updater() {
-  const { account, chainId, connector, provider } = useWeb3React()
+  const { account, chainId, connector, provider } = usePeazeReact()
   const { pathname } = useLocation()
   const currentPage = getCurrentPageFromLocation(pathname)
 

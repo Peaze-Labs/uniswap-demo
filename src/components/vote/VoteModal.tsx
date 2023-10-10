@@ -1,7 +1,7 @@
 import { Trans } from '@lingui/macro'
-import { useWeb3React } from '@web3-react/core'
 import { useState } from 'react'
 import { ArrowUpCircle, X } from 'react-feather'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled, { useTheme } from 'styled-components'
 import { formatCurrencyAmount } from 'utils/formatCurrencyAmount'
 
@@ -44,7 +44,7 @@ interface VoteModalProps {
 }
 
 export default function VoteModal({ isOpen, onDismiss, proposalId, voteOption }: VoteModalProps) {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const voteCallback = useVoteCallback()
   const { votes: availableVotes } = useUserVotes()
 

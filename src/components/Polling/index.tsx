@@ -1,5 +1,4 @@
 import { Trans } from '@lingui/macro'
-import { useWeb3React } from '@web3-react/core'
 import { RowFixed } from 'components/Row'
 import { getChainInfo } from 'constants/chainInfo'
 import useCurrentBlockTimestamp from 'hooks/useCurrentBlockTimestamp'
@@ -9,6 +8,7 @@ import useMachineTimeMs from 'hooks/useMachineTime'
 import useBlockNumber from 'lib/hooks/useBlockNumber'
 import ms from 'ms'
 import { useEffect, useMemo, useState } from 'react'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled, { keyframes } from 'styled-components'
 import { ExternalLink, ThemedText } from 'theme'
 import { ExplorerDataType, getExplorerLink } from 'utils/getExplorerLink'
@@ -101,7 +101,7 @@ const DEFAULT_MS_BEFORE_WARNING = ms(`10m`)
 const NETWORK_HEALTH_CHECK_MS = ms(`10s`)
 
 export default function Polling() {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const blockNumber = useBlockNumber()
   const [isMounting, setIsMounting] = useState(false)
   const [isHover, setIsHover] = useState(false)

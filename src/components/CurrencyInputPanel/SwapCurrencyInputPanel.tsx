@@ -2,7 +2,6 @@ import { Trans } from '@lingui/macro'
 import { BrowserEvent, InterfaceElementName, SwapEventName } from '@uniswap/analytics-events'
 import { Currency, CurrencyAmount, Percent } from '@uniswap/sdk-core'
 import { Pair } from '@uniswap/v2-sdk'
-import { useWeb3React } from '@web3-react/core'
 import { TraceEvent } from 'analytics'
 import PrefetchBalancesWrapper from 'components/AccountDrawer/PrefetchBalancesWrapper'
 import { AutoColumn } from 'components/Column'
@@ -15,6 +14,7 @@ import ms from 'ms'
 import { darken } from 'polished'
 import { forwardRef, ReactNode, useCallback, useEffect, useState } from 'react'
 import { Lock } from 'react-feather'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled, { useTheme } from 'styled-components'
 import { flexColumnNoWrap, flexRowNoWrap } from 'theme/styles'
 import { NumberType, useFormatter } from 'utils/formatNumbers'
@@ -277,7 +277,7 @@ const SwapCurrencyInputPanel = forwardRef<HTMLInputElement, SwapCurrencyInputPan
     ref
   ) => {
     const [modalOpen, setModalOpen] = useState(false)
-    const { account, chainId } = useWeb3React()
+    const { account, chainId } = usePeazeReact()
     const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
     const polygonUsdcBalance = usePolygonUsdcBalance(account ?? undefined)
     const theme = useTheme()

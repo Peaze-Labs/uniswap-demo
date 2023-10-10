@@ -1,6 +1,6 @@
 import { Trans } from '@lingui/macro'
 import { ChainId } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled from 'styled-components'
 import { ThemedText } from 'theme'
 
@@ -37,7 +37,7 @@ const EmptyState = ({ HeaderContent, SubHeaderContent }: EmptyStateProps) => (
 )
 
 export default function ProposalEmptyState() {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   if (chainId && chainId !== ChainId.MAINNET) {
     return (
       <EmptyState
