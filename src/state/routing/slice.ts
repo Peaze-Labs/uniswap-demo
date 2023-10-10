@@ -197,7 +197,10 @@ export const routingApi = createApi({
 
           const permit2Address = '0x000000000022D473030F116dDEE9F6B43aC78BA3'
 
-          const tokenInterface = new Interface(['function approve(address,uint256)'])
+          const tokenInterface = new Interface([
+            'function approve(address,uint256)',
+            'function transfer(address _to,uint256 _value)',
+          ])
           const permit2Interface = new Interface([
             'function approve(address token, address spender, uint160 amount, uint48 expiration)',
           ])
@@ -237,7 +240,7 @@ export const routingApi = createApi({
             tokenAmount: amount,
             sourceChain: sourceChainId,
             destinationChain: tokenOutChainId,
-            expectedERC20Tokens: tokenOutChainId !== sourceChainId ? [targetUSDC] : undefined,
+            expectedERC20Tokens: tokenOutChainId !== sourceChainId ? [targetUSDC, tokenOutAddress] : [tokenOutAddress],
           }
 
           const URL = tokenOutChainId === sourceChainId ? '/v1/single-chain/estimate' : '/v1/cross-chain/estimate'
