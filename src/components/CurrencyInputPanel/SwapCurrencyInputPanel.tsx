@@ -1,5 +1,5 @@
 import { Trans } from '@lingui/macro'
-import { BrowserEvent, InterfaceElementName, SwapEventName } from '@uniswap/analytics-events'
+import { BrowserEvent, InterfaceElementName, InterfaceSectionName, SwapEventName } from '@uniswap/analytics-events'
 import { Currency, CurrencyAmount, Percent } from '@uniswap/sdk-core'
 import { Pair } from '@uniswap/v2-sdk'
 import { TraceEvent } from 'analytics'
@@ -9,7 +9,7 @@ import { LoadingOpacityContainer, loadingOpacityMixin } from 'components/Loader/
 import CurrencyLogo from 'components/Logo/CurrencyLogo'
 import Tooltip from 'components/Tooltip'
 import { isSupportedChain } from 'constants/chains'
-import { usePolygonUsdcBalance } from 'lib/hooks/useCurrencyBalance'
+import { useSourceChainUsdcBalance } from 'lib/hooks/useCurrencyBalance'
 import ms from 'ms'
 import { darken } from 'polished'
 import { forwardRef, ReactNode, useCallback, useEffect, useState } from 'react'
@@ -279,7 +279,7 @@ const SwapCurrencyInputPanel = forwardRef<HTMLInputElement, SwapCurrencyInputPan
     const [modalOpen, setModalOpen] = useState(false)
     const { account, chainId } = usePeazeReact()
     const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
-    const polygonUsdcBalance = usePolygonUsdcBalance(account ?? undefined)
+    const polygonUsdcBalance = useSourceChainUsdcBalance(account ?? undefined)
     const theme = useTheme()
     const { formatCurrencyAmount } = useFormatter()
 
@@ -359,7 +359,12 @@ const SwapCurrencyInputPanel = forwardRef<HTMLInputElement, SwapCurrencyInputPan
                           <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={24} margin={true} />
                         </span>
                       ) : currency ? (
-                        <CurrencyLogo style={{ marginRight: '2px' }} currency={currency} size="24px" />
+                        <CurrencyLogo
+                          style={{ marginRight: '2px' }}
+                          currency={currency}
+                          size="24px"
+                          isInputCurrency={id === InterfaceSectionName.CURRENCY_INPUT_PANEL}
+                        />
                       ) : null}
                       {pair ? (
                         <StyledTokenName className="pair-name-container">

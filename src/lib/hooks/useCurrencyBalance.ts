@@ -1,7 +1,7 @@
 import { Interface } from '@ethersproject/abi'
 import { Contract } from '@ethersproject/contracts'
 import { JsonRpcProvider } from '@ethersproject/providers'
-import { ChainId, Currency, CurrencyAmount, Token } from '@uniswap/sdk-core'
+import { Currency, CurrencyAmount, Token } from '@uniswap/sdk-core'
 import ERC20ABI from 'abis/erc20.json'
 import { Erc20Interface } from 'abis/types/Erc20'
 import { RPC_URLS } from 'constants/networks'
@@ -9,6 +9,8 @@ import JSBI from 'jsbi'
 import { useMultipleContractSingleData, useSingleContractMultipleData } from 'lib/hooks/multicall'
 import { useEffect, useMemo, useState } from 'react'
 import { usePeazeReact } from 'state/peaze/hooks'
+import { peazeStore } from 'state/peaze/store'
+import { getUsdcAddressDstChain } from 'utils/chains'
 
 import { nativeOnChain } from '../../constants/tokens'
 import { useInterfaceMulticall } from '../../hooks/useContract'
@@ -155,21 +157,29 @@ const PolygonUSDC = new Token(
   'USDCoin'
 )
 
-export function usePolygonUsdcBalance(account?: string): CurrencyAmount<Currency> | undefined {
+export function useSourceChainUsdcBalance(account?: string): CurrencyAmount<Currency> | undefined {
+  const { sourceChainId } = peazeStore()
   const [amount, setAmount] = useState<CurrencyAmount<Currency>>(CurrencyAmount.fromRawAmount(PolygonUSDC, 0))
 
+  const usdcToken = useMemo(
+    () =>
+      sourceChainId ? new Token(sourceChainId, getUsdcAddressDstChain(sourceChainId), 6, 'USDC', 'USDCoin') : null,
+    [sourceChainId]
+  )
+
   const getUsdcBalance = async () => {
-    if (!account) return CurrencyAmount.fromRawAmount(PolygonUSDC, 0)
+    if (!account || !usdcToken || !sourceChainId) return CurrencyAmount.fromRawAmount(PolygonUSDC, 0)
 
     const usdcContract = new Contract(
-      PolygonUSDC.address,
+      usdcToken.address,
       ERC20Interface,
-      new JsonRpcProvider(RPC_URLS[ChainId.POLYGON][0])
+      // @ts-ignore
+      new JsonRpcProvider(RPC_URLS[sourceChainId][0])
     )
 
     const amount = await usdcContract.balanceOf(account)
 
-    return CurrencyAmount.fromRawAmount(PolygonUSDC, amount)
+    return CurrencyAmount.fromRawAmount(usdcToken, amount)
   }
 
   useEffect(() => {
@@ -178,7 +188,7 @@ export function usePolygonUsdcBalance(account?: string): CurrencyAmount<Currency
         setAmount(_amount)
       })
       .catch((e) => console.error('Error fetching currency amount'))
-  }, [account])
+  }, [account, sourceChainId])
 
   return amount
 }

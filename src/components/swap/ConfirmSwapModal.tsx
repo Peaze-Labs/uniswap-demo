@@ -319,7 +319,7 @@ export default function ConfirmSwapModal({
 
     const {
       typedData: { td712, td2612 },
-      costSummary: { gasCostInWei },
+      costSummary: { gasCostInWei, gasUsedOnDst },
     } = estimateResult
     const signer = provider.getSigner()
 
@@ -336,13 +336,14 @@ export default function ConfirmSwapModal({
 
     setPeazeSigningState(false, undefined)
 
+    const isSingleChain = estimateRequest.sourceChain === estimateRequest.destinationChain
     const txn = {
-      sourceToken: estimateRequest.sourceToken,
+      // sourceToken: estimateRequest.sourceToken,
       sourceChain: estimateRequest.sourceChain,
       destinationToken: getUsdcAddressDstChain(estimateRequest.destinationChain),
       destinationChain: estimateRequest.destinationChain,
-      gasCostInWei, // for single-chain tx, this will be used to set the gas limit
-      txValue: gasCostInWei, // for cross-chain tx, this will be paid to Stargate during tx
+      gasUsed: gasUsedOnDst, // for single-chain tx, this will be used to set the gas limit
+      txValue: isSingleChain ? null : gasCostInWei, // for cross-chain tx, this will be paid to Stargate during tx
       signatures: {
         sig712,
         sig2612,
@@ -351,10 +352,7 @@ export default function ConfirmSwapModal({
       domain: td712.domain,
     }
 
-    const URL =
-      estimateRequest.sourceChain === estimateRequest.destinationChain
-        ? '/v1/single-chain/execute'
-        : '/v1/cross-chain/execute'
+    const URL = isSingleChain ? '/v1/single-chain/execute' : '/v1/cross-chain/execute'
 
     const response = await peazeAxios.post(URL, txn)
 

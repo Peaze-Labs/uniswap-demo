@@ -91,6 +91,7 @@ export const ArrowContainer = styled.div`
 
   width: 100%;
   height: 100%;
+  cursor: not-allowed;
 `
 
 const SwapSection = styled.div`
@@ -662,18 +663,15 @@ export function Swap({
           >
             <ArrowContainer
               data-testid="swap-currency-button"
-              onClick={() => {
-                return
-
-                //
-                // if (disableTokenInputs) return
-                // onSwitchTokens(inputTokenHasTax, formattedAmounts[dependentField])
-                // maybeLogFirstSwapAction(trace)
-                //
-              }}
+              // Diable switching currency (for Peaze)
+              // onClick={() => {
+              //   if (disableTokenInputs) return
+              //   onSwitchTokens(inputTokenHasTax, formattedAmounts[dependentField])
+              //   maybeLogFirstSwapAction(trace)
+              // }}
               color={theme.neutral1}
             >
-              <ArrowDown size="16" color={theme.neutral1} />
+              <ArrowDown size="16" color={theme.neutral3} />
             </ArrowContainer>
           </TraceEvent>
         </ArrowWrapper>
