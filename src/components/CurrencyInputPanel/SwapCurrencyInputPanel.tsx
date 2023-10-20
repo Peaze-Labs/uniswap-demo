@@ -364,6 +364,7 @@ const SwapCurrencyInputPanel = forwardRef<HTMLInputElement, SwapCurrencyInputPan
                           currency={currency}
                           size="24px"
                           isInputCurrency={id === InterfaceSectionName.CURRENCY_INPUT_PANEL}
+                          isOutputCurrency={id === InterfaceSectionName.CURRENCY_OUTPUT_PANEL}
                         />
                       ) : null}
                       {pair ? (

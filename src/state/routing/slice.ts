@@ -183,6 +183,8 @@ export const routingApi = createApi({
           const uraQuoteResponse = response.data as URAQuoteResponse
           const tradeResult = await transformRoutesToTrade(args, uraQuoteResponse, QuoteMethod.ROUTING_API)
 
+          console.log('tradeResult', tradeResult)
+
           if (!tradeResult.trade) {
             window.alert('need to figure out how to handle now trade from API')
             throw new Error('need to figure out how to handle no trade from API')
@@ -205,7 +207,7 @@ export const routingApi = createApi({
             'function approve(address token, address spender, uint160 amount, uint48 expiration)',
           ])
 
-          const sourceChainId = 137
+          const sourceChainId = peazeStore.getState().sourceChainId!
           const targetUSDC = getUsdcAddressDstChain(tokenOutChainId)
 
           const permit2ApprovalData = permit2Interface.encodeFunctionData('approve', [

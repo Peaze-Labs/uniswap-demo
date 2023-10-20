@@ -1,12 +1,16 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import type { TransactionResponse } from '@ethersproject/providers'
+import { getMessagesBySrcTxHash, MessageStatus } from '@layerzerolabs/scan-client'
 import { ChainId, SUPPORTED_CHAINS, Token } from '@uniswap/sdk-core'
 import { getTransactionStatus } from 'components/AccountDrawer/MiniPortfolio/Activity/parseLocal'
 import { TransactionStatus } from 'graphql/data/__generated__/types-and-hooks'
 import { SwapResult } from 'hooks/useSwapCallback'
 import { useCallback, useMemo } from 'react'
+import { useQuery } from 'react-query'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { stargateChainIds } from 'state/peaze/constants'
 import { usePeazeReact } from 'state/peaze/hooks'
+import { peazeStore } from 'state/peaze/store'
 import { TradeFillType } from 'state/routing/types'
 
 import { addTransaction, cancelTransaction, removeTransaction } from './reducer'
@@ -104,8 +108,53 @@ export function useIsTransactionConfirmed(transactionHash?: string): boolean {
   return Boolean(transactions[transactionHash].receipt)
 }
 
+export function useLayerZeroTransaction(enabled: boolean) {
+  const { executeResult } = peazeStore()
+
+  return useQuery({
+    queryKey: ['layerzero-transaction-status', executeResult],
+    queryFn: async () => {
+      if (!executeResult) {
+        return null
+      }
+
+      const stargateChainId = stargateChainIds[executeResult.sourceChain]
+      if (!stargateChainId) {
+        return null
+      }
+
+      return getMessagesBySrcTxHash(stargateChainId, executeResult.transactionHash)
+    },
+    enabled,
+  })
+}
+
+function useLayerZeroTransactionStatus(enabled: boolean) {
+  const { data: response } = useLayerZeroTransaction(enabled)
+  const status = response?.messages[0].status
+
+  switch (status) {
+    case MessageStatus.DELIVERED:
+      return TransactionStatus.Confirmed
+
+    case MessageStatus.FAILED:
+      return TransactionStatus.Failed
+
+    case MessageStatus.INFLIGHT:
+      return TransactionStatus.Pending
+  }
+
+  return undefined
+}
+
 export function useSwapTransactionStatus(swapResult: SwapResult | undefined): TransactionStatus | undefined {
   const transaction = useTransaction(swapResult?.type === TradeFillType.Classic ? swapResult.response.hash : undefined)
+
+  const lzTxStatus = useLayerZeroTransactionStatus(swapResult?.type === TradeFillType.Peaze)
+
+  // TODO: When swapResult?.type === TradeFillType.Peaze, peoridically pull transaction status by
+  if (lzTxStatus) return lzTxStatus
+
   if (!transaction) return undefined
   return getTransactionStatus(transaction)
 }

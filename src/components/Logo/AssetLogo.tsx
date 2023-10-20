@@ -2,6 +2,7 @@ import { ChainId } from '@uniswap/sdk-core'
 import { getChainInfo } from 'constants/chainInfo'
 import useTokenLogoSource from 'hooks/useAssetLogoSource'
 import React, { useState } from 'react'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { peazeStore } from 'state/peaze/store'
 import styled from 'styled-components'
 
@@ -60,6 +61,7 @@ type AssetLogoProps = AssetLogoBaseProps & {
   address?: string | null
   chainId?: number
   isInputCurrency?: boolean
+  isOutputCurrency?: boolean
 }
 
 const LogoContainer = styled.div`
@@ -92,6 +94,7 @@ export default function AssetLogo({
   size = '24px',
   style,
   isInputCurrency,
+  isOutputCurrency,
   hideL2Icon = false,
 }: AssetLogoProps) {
   const [src, nextSrc] = useTokenLogoSource(address, chainId, isNative, backupImg)
@@ -102,6 +105,8 @@ export default function AssetLogo({
     return src ? img.complete : false
   })
   const { sourceChainId } = peazeStore()
+  const { chainId: targetChainId } = usePeazeReact()
+  const iconChainId = isOutputCurrency ? targetChainId : isInputCurrency ? sourceChainId : null
 
   return (
     <LogoContainer style={{ height: size, width: size, ...style }}>
@@ -115,9 +120,9 @@ export default function AssetLogo({
             onError={nextSrc}
             imgLoaded={imgLoaded}
           />
-          {!!isInputCurrency && (
+          {iconChainId && (
             <ChainLogo
-              src={sourceChainId === 137 ? POLYGON_CHAIN_URL : getChainInfo(sourceChainId)?.logoUrl}
+              src={iconChainId === 137 ? POLYGON_CHAIN_URL : getChainInfo(iconChainId)?.logoUrl}
               alt="Polygon"
             />
           )}

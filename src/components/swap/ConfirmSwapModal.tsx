@@ -16,7 +16,7 @@ import { TransactionStatus } from 'graphql/data/__generated__/types-and-hooks'
 import { useMaxAmountIn } from 'hooks/useMaxAmountIn'
 import { Allowance, AllowanceState } from 'hooks/usePermit2Allowance'
 import usePrevious from 'hooks/usePrevious'
-import { SwapResult } from 'hooks/useSwapCallback'
+import { PeazeSwapResult, SwapResult } from 'hooks/useSwapCallback'
 import useWrapCallback from 'hooks/useWrapCallback'
 import useNativeCurrency from 'lib/hooks/useNativeCurrency'
 import { getPriceUpdateBasisPoints } from 'lib/utils/analytics'
@@ -30,7 +30,7 @@ import { useIsTransactionConfirmed, useSwapTransactionStatus } from 'state/trans
 import styled from 'styled-components'
 import { ThemedText } from 'theme'
 import invariant from 'tiny-invariant'
-import { getUsdcAddressDstChain, isL2ChainId } from 'utils/chains'
+import { isL2ChainId } from 'utils/chains'
 import { NumberType, useFormatter } from 'utils/formatNumbers'
 import { formatSwapPriceUpdatedEventProperties } from 'utils/loggingFormatters'
 import { didUserReject } from 'utils/swapErrorToUserReadableMessage'
@@ -273,7 +273,7 @@ export default function ConfirmSwapModal({
   onDismiss,
   onCurrencySelection,
   swapError,
-  swapResult,
+  // swapResult, // TODO: Original swap result
   fiatValueInput,
   fiatValueOutput,
 }: {
@@ -302,6 +302,7 @@ export default function ConfirmSwapModal({
       allowance,
       doesTradeDiffer: Boolean(doesTradeDiffer),
     })
+  const [swapResult, setPeazeSwapResult] = useState<PeazeSwapResult>()
 
   const { setPeazeSigningState } = peazeStore()
 
@@ -315,49 +316,64 @@ export default function ConfirmSwapModal({
       throw new Error('handlePeazeExecute(): estimateRequest or estimateResult is null')
     }
 
-    setPeazeSigningState(true, chainId)
+    try {
+      const { quote } = estimateResult
+      const signer = provider.getSigner()
 
-    const {
-      typedData: { td712, td2612 },
-      costSummary: { gasCostInWei, gasUsedOnDst },
-    } = estimateResult
-    const signer = provider.getSigner()
+      setPeazeSigningState(true, chainId)
 
-    // Switch back to source chain
-    await provider.send('wallet_switchEthereumChain', [{ chainId: `0x${td712.domain.chainId.toString(16)}` }])
+      // Switch back to source chain
+      await provider.send('wallet_switchEthereumChain', [
+        { chainId: `0x${quote.peazeTypedData.domain.chainId.toString(16)}` },
+      ])
 
-    const sig712 = await signer._signTypedData(td712.domain, td712.types, td712.message)
-    const sig2612 = await signer._signTypedData(td2612.domain, td2612.types, td2612.message)
+      const peazeSignature = await signer._signTypedData(
+        quote.peazeTypedData.domain,
+        quote.peazeTypedData.types,
+        quote.peazeTypedData.message
+      )
+      const permitSignature = await signer._signTypedData(
+        quote.permitTypedData.domain,
+        quote.permitTypedData.types,
+        quote.permitTypedData.message
+      )
 
-    // Switch back to desitnation chain
-    await provider.send('wallet_switchEthereumChain', [
-      { chainId: `0x${estimateRequest.destinationChain.toString(16)}` },
-    ])
+      // Switch back to desitnation chain
+      await provider.send('wallet_switchEthereumChain', [
+        { chainId: `0x${estimateRequest.destinationChain.toString(16)}` },
+      ])
 
-    setPeazeSigningState(false, undefined)
+      setPeazeSigningState(false, undefined)
 
-    const isSingleChain = estimateRequest.sourceChain === estimateRequest.destinationChain
-    const txn = {
-      // sourceToken: estimateRequest.sourceToken,
-      sourceChain: estimateRequest.sourceChain,
-      destinationToken: getUsdcAddressDstChain(estimateRequest.destinationChain),
-      destinationChain: estimateRequest.destinationChain,
-      gasUsed: gasUsedOnDst, // for single-chain tx, this will be used to set the gas limit
-      txValue: isSingleChain ? null : gasCostInWei, // for cross-chain tx, this will be paid to Stargate during tx
-      signatures: {
-        sig712,
-        sig2612,
-      },
-      message: td712.message,
-      domain: td712.domain,
+      const isSingleChain = estimateRequest.sourceChain === estimateRequest.destinationChain
+      const txn = {
+        quote,
+        signatures: {
+          peazeSignature,
+          permitSignature,
+        },
+      }
+
+      const URL = isSingleChain ? '/v1/single-chain/execute' : '/v1/cross-chain/execute'
+
+      const response = await peazeAxios.post(URL, txn)
+
+      console.log('peaze execute response', response.data)
+
+      peazeStore.setState({
+        executeResult: response.data,
+      })
+
+      setPeazeSwapResult({
+        type: TradeFillType.Peaze,
+        response: {
+          ...response.data,
+          hash: response.data.transactionHash,
+        },
+      })
+    } catch (e) {
+      console.log('ConfirmSwapModal.handlePeazeExecute() error', e)
     }
-
-    const URL = isSingleChain ? '/v1/single-chain/execute' : '/v1/cross-chain/execute'
-
-    const response = await peazeAxios.post(URL, txn)
-
-    console.log('response.data', response.data)
-
     // TODO: add start tracking transaction hash where other transactions are tracked for UI purposes
   }
 

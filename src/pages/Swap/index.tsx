@@ -139,6 +139,7 @@ function getIsValidSwapQuote(
   tradeState: TradeState,
   swapInputError?: ReactNode
 ): boolean {
+  console.log('getIsValidSwapQuote', { swapInputError, trade, tradeState })
   return Boolean(!swapInputError && trade && tradeState === TradeState.VALID)
 }
 

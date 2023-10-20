@@ -1,3 +1,4 @@
+import { Message } from '@layerzerolabs/scan-client'
 import { t, Trans } from '@lingui/macro'
 import { ChainId, Currency } from '@uniswap/sdk-core'
 import { OrderContent } from 'components/AccountDrawer/MiniPortfolio/Activity/OffchainActivityModal'
@@ -13,7 +14,7 @@ import { usePeazeReact } from 'state/peaze/hooks'
 import { InterfaceTrade, TradeFillType } from 'state/routing/types'
 import { useOrder } from 'state/signatures/hooks'
 import { UniswapXOrderDetails } from 'state/signatures/types'
-import { useIsTransactionConfirmed, useSwapTransactionStatus } from 'state/transactions/hooks'
+import { useIsTransactionConfirmed, useLayerZeroTransaction, useSwapTransactionStatus } from 'state/transactions/hooks'
 import styled, { css, keyframes } from 'styled-components'
 import { ExternalLink } from 'theme'
 import { ThemedText } from 'theme/components/text'
@@ -138,7 +139,10 @@ function getPendingConfirmationContent({
   trade,
   chainId,
   swapResult,
-}: Pick<ContentArgs, 'swapConfirmed' | 'swapPending' | 'trade' | 'chainId' | 'swapResult'>): PendingModalStep {
+  lzMessage,
+}: Pick<ContentArgs, 'swapConfirmed' | 'swapPending' | 'trade' | 'chainId' | 'swapResult'> & {
+  lzMessage?: Message
+}): PendingModalStep {
   const title = swapPending ? t`Swap submitted` : swapConfirmed ? t`Swap success!` : t`Confirm Swap`
   const tradeSummary = trade ? <TradeSummary trade={trade} /> : null
   if (swapPending && trade?.fillType === TradeFillType.UniswapX) {
@@ -151,6 +155,42 @@ function getPendingConfirmationContent({
         </ExternalLink>
       ),
     }
+    // } else if ((swapPending || swapConfirmed) && chainId && swapResult?.type === TradeFillType.Peaze) {
+    //   console.log('getPendingConfirmationContent', { chainId, swapConfirmed, swapPending, swapResult })
+
+    //   const { executeResult } = peazeStore.getState()
+
+    //   const srcExplorerLink = executeResult ? (
+    //     <ExternalLink
+    //       href={getExplorerLink(executeResult.sourceChain, lzMessage?.srcTxHash ?? '', ExplorerDataType.TRANSACTION)}
+    //       color="neutral2"
+    //     >
+    //       <Trans>View on Explorer</Trans>
+    //     </ExternalLink>
+    //   ) : null
+
+    //   const dstExplorerLink = lzMessage ? (
+    //     <ExternalLink
+    //       href={getExplorerLink(lzMessage.dstChainId, lzMessage.dstTxHash ?? '', ExplorerDataType.TRANSACTION)}
+    //       color="neutral2"
+    //     >
+    //       <Trans>View on Explorer</Trans>
+    //     </ExternalLink>
+    //   ) : null
+    //   if (swapPending) {
+    //     // On Mainnet, we show a "submitted" state while the transaction is pending confirmation.
+    //     return {
+    //       title,
+    //       subtitle: tradeSummary,
+    //       bottomLabel: srcExplorerLink,
+    //     }
+    //   } else {
+    //     return {
+    //       title,
+    //       subtitle: dstExplorerLink,
+    //       bottomLabel: null,
+    //     }
+    //   }
   } else if ((swapPending || swapConfirmed) && chainId && swapResult?.type === TradeFillType.Classic) {
     const explorerLink = (
       <ExternalLink
@@ -196,6 +236,9 @@ function useStepContents(args: ContentArgs): Record<PendingConfirmModalState, Pe
     chainId,
   } = args
 
+  const { data: lzResponse } = useLayerZeroTransaction(true)
+  const lzMessage = lzResponse?.messages[0]
+
   return useMemo(
     () => ({
       [ConfirmModalState.WRAPPING]: {
@@ -236,6 +279,7 @@ function useStepContents(args: ContentArgs): Record<PendingConfirmModalState, Pe
         swapPending,
         swapResult,
         trade,
+        lzMessage,
       }),
     }),
     [
@@ -248,6 +292,7 @@ function useStepContents(args: ContentArgs): Record<PendingConfirmModalState, Pe
       tokenApprovalPending,
       trade,
       wrapPending,
+      lzMessage,
     ]
   )
 }

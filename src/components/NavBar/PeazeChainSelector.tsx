@@ -40,10 +40,7 @@ export const PeazeChainSelector = ({ leftAlign }: ChainSelectorProps) => {
 
   const onSelectChain = useCallback(
     async (targetChainId: ChainId) => {
-      console.log('onSelectChain', targetChainId)
-
       setSourceChainId(targetChainId)
-
       setIsOpen(false)
     },
     [setIsOpen, setSourceChainId]
