@@ -1,6 +1,5 @@
 import { Trans } from '@lingui/macro'
 import { BrowserEvent, InterfaceElementName, InterfaceEventName, InterfacePageName } from '@uniswap/analytics-events'
-import { useWeb3React } from '@web3-react/core'
 import { Trace, TraceEvent } from 'analytics'
 import { useToggleAccountDrawer } from 'components/AccountDrawer'
 import { ButtonGray, ButtonPrimary, ButtonText } from 'components/Button'
@@ -16,6 +15,7 @@ import { useV3Positions } from 'hooks/useV3Positions'
 import { useMemo } from 'react'
 import { AlertTriangle, BookOpen, ChevronDown, ChevronsRight, Inbox, Layers } from 'react-feather'
 import { Link } from 'react-router-dom'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { useUserHideClosedPositions } from 'state/user/hooks'
 import styled, { css, useTheme } from 'styled-components'
 import { HideSmall, ThemedText } from 'theme'
@@ -188,7 +188,7 @@ function WrongNetworkCard() {
 }
 
 export default function Pool() {
-  const { account, chainId } = useWeb3React()
+  const { account, chainId } = usePeazeReact()
   const networkSupportsV2 = useNetworkSupportsV2()
   const toggleWalletDrawer = useToggleAccountDrawer()
 

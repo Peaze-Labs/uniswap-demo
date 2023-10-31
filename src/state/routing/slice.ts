@@ -183,6 +183,8 @@ export const routingApi = createApi({
           const uraQuoteResponse = response.data as URAQuoteResponse
           const tradeResult = await transformRoutesToTrade(args, uraQuoteResponse, QuoteMethod.ROUTING_API)
 
+          console.log('tradeResult', tradeResult)
+
           if (!tradeResult.trade) {
             window.alert('need to figure out how to handle now trade from API')
             throw new Error('need to figure out how to handle no trade from API')
@@ -197,12 +199,15 @@ export const routingApi = createApi({
 
           const permit2Address = '0x000000000022D473030F116dDEE9F6B43aC78BA3'
 
-          const tokenInterface = new Interface(['function approve(address,uint256)'])
+          const tokenInterface = new Interface([
+            'function approve(address,uint256)',
+            'function transfer(address _to,uint256 _value)',
+          ])
           const permit2Interface = new Interface([
             'function approve(address token, address spender, uint160 amount, uint48 expiration)',
           ])
 
-          const sourceChainId = 137
+          const sourceChainId = peazeStore.getState().sourceChainId!
           const targetUSDC = getUsdcAddressDstChain(tokenOutChainId)
 
           const permit2ApprovalData = permit2Interface.encodeFunctionData('approve', [
@@ -233,20 +238,20 @@ export const routingApi = createApi({
               },
             ],
             userAddress: account,
-            sourceToken: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174', // USDC on polygon
             tokenAmount: amount,
             sourceChain: sourceChainId,
             destinationChain: tokenOutChainId,
-            expectedERC20Tokens: tokenOutChainId !== sourceChainId ? [targetUSDC] : undefined,
+            expectedERC20Tokens: tokenOutChainId !== sourceChainId ? [targetUSDC, tokenOutAddress] : [tokenOutAddress],
           }
 
           const URL = tokenOutChainId === sourceChainId ? '/v1/single-chain/estimate' : '/v1/cross-chain/estimate'
 
           const request = await peazeAxios.post(URL, estimateRequestBody)
 
-          peazeStore.setState({ estimateRequest: estimateRequestBody, estimateResult: request.data })
-
-          console.log({ request, estimateRequestBody })
+          peazeStore.setState({
+            estimateRequest: estimateRequestBody,
+            estimateResult: request.data,
+          })
 
           return { data: { ...tradeResult, latencyMs: getQuoteLatencyMeasure(quoteStartMark).duration } }
         } catch (error: any) {

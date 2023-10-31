@@ -7,7 +7,6 @@ import {
 import { AddressMap } from '@uniswap/smart-order-router'
 import MulticallJSON from '@uniswap/v3-periphery/artifacts/contracts/lens/UniswapInterfaceMulticall.sol/UniswapInterfaceMulticall.json'
 import NFTPositionManagerJSON from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
-import { useWeb3React } from '@web3-react/core'
 import { isSupportedChain } from 'constants/chains'
 import { RPC_PROVIDERS } from 'constants/providers'
 import { BaseContract } from 'ethers/lib/ethers'
@@ -15,6 +14,7 @@ import { ContractInput, useUniswapPricesQuery } from 'graphql/data/__generated__
 import { toContractInput } from 'graphql/data/util'
 import useStablecoinPrice from 'hooks/useStablecoinPrice'
 import { useMemo } from 'react'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { NonfungiblePositionManager, UniswapInterfaceMulticall } from 'types/v3'
 import { getContract } from 'utils'
 import { CurrencyKey, currencyKey, currencyKeyFromGraphQL } from 'utils/currencyKey'
@@ -29,7 +29,7 @@ function useContractMultichain<T extends BaseContract>(
   ABI: any,
   chainIds?: ChainId[]
 ): ContractMap<T> {
-  const { chainId: walletChainId, provider: walletProvider } = useWeb3React()
+  const { chainId: walletChainId, provider: walletProvider } = usePeazeReact()
 
   return useMemo(() => {
     const relevantChains =

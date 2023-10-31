@@ -1,4 +1,3 @@
-import { useWeb3React } from '@web3-react/core'
 import { OffchainActivityModal } from 'components/AccountDrawer/MiniPortfolio/Activity/OffchainActivityModal'
 import UniwalletModal from 'components/AccountDrawer/UniwalletModal'
 import BaseAnnouncementBanner from 'components/Banner/BaseAnnouncementBanner'
@@ -9,6 +8,7 @@ import useAccountRiskCheck from 'hooks/useAccountRiskCheck'
 import { lazy } from 'react'
 import { useModalIsOpen, useToggleModal } from 'state/application/hooks'
 import { ApplicationModal } from 'state/application/reducer'
+import { usePeazeReact } from 'state/peaze/hooks'
 
 const Bag = lazy(() => import('nft/components/bag/Bag'))
 const TransactionCompleteModal = lazy(() => import('nft/components/collection/TransactionCompleteModal'))
@@ -18,7 +18,7 @@ export default function TopLevelModals() {
   const addressClaimOpen = useModalIsOpen(ApplicationModal.ADDRESS_CLAIM)
   const addressClaimToggle = useToggleModal(ApplicationModal.ADDRESS_CLAIM)
   const blockedAccountModalOpen = useModalIsOpen(ApplicationModal.BLOCKED_ACCOUNT)
-  const { account } = useWeb3React()
+  const { account } = usePeazeReact()
   useAccountRiskCheck(account)
   const accountBlocked = Boolean(blockedAccountModalOpen && account)
 

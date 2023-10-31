@@ -1,6 +1,6 @@
 import userEvent from '@testing-library/user-event'
-import { useWeb3React } from '@web3-react/core'
 import { useAccountDrawer } from 'components/AccountDrawer'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { mocked } from 'test-utils/mocked'
 import { act, fireEvent, render, screen } from 'test-utils/render'
 
@@ -67,10 +67,10 @@ describe('SwapBuyFiatButton.tsx', () => {
   })
 
   it('fiat on ramps available in region, account connected', async () => {
-    mocked(useWeb3React).mockReturnValue({
+    mocked(usePeazeReact).mockReturnValue({
       account: '0x52270d8234b864dcAC9947f510CE9275A8a116Db',
       isActive: true,
-    } as ReturnType<typeof useWeb3React>)
+    } as ReturnType<typeof usePeazeReact>)
     mockUseFiatOnrampAvailability.mockImplementation(mockUseFiatOnRampsAvailable)
     mockuseAccountDrawer.mockImplementation(() => [false, toggleWalletDrawer])
     mockUseOpenModal.mockImplementation(() => useOpenModal)

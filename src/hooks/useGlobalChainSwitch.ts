@@ -1,10 +1,10 @@
-import { useWeb3React } from '@web3-react/core'
 import { Chain } from 'graphql/data/Token'
 import { chainIdToBackendName } from 'graphql/data/util'
 import { useEffect, useRef } from 'react'
+import { usePeazeReact } from 'state/peaze/hooks'
 
 export const useOnGlobalChainSwitch = (callback: (chain: Chain) => void) => {
-  const { chainId: connectedChainId } = useWeb3React()
+  const { chainId: connectedChainId } = usePeazeReact()
   const globalChainName = chainIdToBackendName(connectedChainId)
   const prevGlobalChainRef = useRef(globalChainName)
   useEffect(() => {

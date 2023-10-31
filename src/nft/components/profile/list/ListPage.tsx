@@ -1,6 +1,5 @@
 import { Trans } from '@lingui/macro'
 import { InterfaceModalName, NFTEventName } from '@uniswap/analytics-events'
-import { useWeb3React } from '@web3-react/core'
 import { sendAnalyticsEvent, useTrace } from 'analytics'
 import Column from 'components/Column'
 import Row from 'components/Row'
@@ -22,6 +21,7 @@ import { formatEth } from 'nft/utils'
 import { ListingMarkets } from 'nft/utils/listNfts'
 import { useEffect, useMemo, useReducer, useState } from 'react'
 import { ArrowLeft } from 'react-feather'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled from 'styled-components'
 import { BREAKPOINTS, ThemedText } from 'theme'
 import { Z_INDEX } from 'theme/zIndex'
@@ -182,7 +182,7 @@ const EthValueWrapper = styled.span<{ totalEthListingValue: boolean }>`
 
 export const ListPage = () => {
   const { setProfilePageState: setSellPageState } = useProfilePageState()
-  const { provider, chainId } = useWeb3React()
+  const { provider, chainId } = usePeazeReact()
   const isMobile = useIsMobile()
   const trace = useTrace({ modal: InterfaceModalName.NFT_LISTING })
   const { formatCurrencyAmount } = useFormatter()

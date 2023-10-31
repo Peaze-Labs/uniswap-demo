@@ -1,20 +1,18 @@
 import { ChainId } from '@uniswap/sdk-core'
 import { create } from 'zustand'
-import { devtools, persist } from 'zustand/middleware'
+import { devtools } from 'zustand/middleware'
 
 const demoValue = {
   costSummary: {
     tokenAddress: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
-    tokenSymbol: 'USDC',
     totalAmount: 1.354139,
     baseAmount: 0.1,
-    gasUsedOnDst: '274914',
     gasCost: 1.240089,
-    gasCostInWei: '2403857106203658301',
     peazeFee: 0.01,
   },
-  typedData: {
-    td2612: {
+  quote: {
+    general: {} as any,
+    permitTypedData: {
       domain: {
         name: 'USD Coin (PoS)',
         version: '1',
@@ -54,7 +52,7 @@ const demoValue = {
         deadline: '1695757060',
       },
     },
-    td712: {
+    peazeTypedData: {
       domain: {
         name: 'PeazeProtocol',
         version: '1',
@@ -167,42 +165,56 @@ const demoValue = {
   },
 }
 
-type EstimateResult = typeof demoValue
-type EsetimateRequest = {
+type PeazeEstimateResult = typeof demoValue
+type PeazeEstimateRequest = {
   transactions: {
     to: string
     data: string
   }[]
   userAddress: string
-  sourceToken: string
   tokenAmount: string
   sourceChain: number
   destinationChain: number
 }
 
+export type PeazeExecuteResult = {
+  transactionId: string
+  transactionHash: string
+  blockExplorerUrl: string
+  sourceChain: number
+  destinationChain: number
+}
+
 interface PeazeStore {
-  estimateResult: EstimateResult | null
-  estimateRequest: EsetimateRequest | null
+  estimateResult: PeazeEstimateResult | null
+  estimateRequest: PeazeEstimateRequest | null
+  executeResult: PeazeExecuteResult | null
   isPeazeSigning: boolean
   sourceChainId?: ChainId
-  setPeazeSigning: (ing: boolean) => unknown
+  lockedChainId?: ChainId
+  setPeazeSigningState: (ing: boolean, lockedChainId?: ChainId) => unknown
   setSourceChainId: (id?: ChainId) => unknown
 }
 
 export const peazeStore = create<PeazeStore>()(
   devtools(
-    persist(
-      (set) => ({
-        estimateResult: null,
-        estimateRequest: null,
-        isPeazeSigning: false,
-        sourceChainId: 137, // optimism
-        setPeazeSigning: (ing) => set((state) => ({ ...state, isPeazeSigning: ing })),
-        setSourceChainId: (id) => set((state) => ({ ...state, sourceChainId: id })),
-      }),
-      {
-        name: 'peaze-storage',
-      }
-    )
+    // persist(
+    (set) => ({
+      estimateResult: null,
+      estimateRequest: null,
+      executeResult: null,
+      isPeazeSigning: false,
+      sourceChainId: 42161, // arbitrum is fast
+      lockedChainId: undefined,
+      setPeazeSigningState: (ing: boolean, lockedChainId?: ChainId) =>
+        set((state) => {
+          return { ...state, isPeazeSigning: ing, lockedChainId }
+        }),
+      setSourceChainId: (id) => set((state) => ({ ...state, sourceChainId: id })),
+    }),
+    {
+      name: 'peaze-storage',
+    }
   )
+  // )
 )

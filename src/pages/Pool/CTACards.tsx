@@ -1,7 +1,7 @@
 import { Trans } from '@lingui/macro'
-import { useWeb3React } from '@web3-react/core'
 import { AutoColumn } from 'components/Column'
 import { getChainInfoOrDefault } from 'constants/chainInfo'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled from 'styled-components'
 import { ThemedText } from 'theme'
 
@@ -63,7 +63,7 @@ const ResponsiveColumn = styled(AutoColumn)`
 `
 
 export default function CTACards() {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const { infoLink } = getChainInfoOrDefault(chainId)
 
   return (

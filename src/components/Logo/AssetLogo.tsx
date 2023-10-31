@@ -2,6 +2,8 @@ import { ChainId } from '@uniswap/sdk-core'
 import { getChainInfo } from 'constants/chainInfo'
 import useTokenLogoSource from 'hooks/useAssetLogoSource'
 import React, { useState } from 'react'
+import { usePeazeReact } from 'state/peaze/hooks'
+import { peazeStore } from 'state/peaze/store'
 import styled from 'styled-components'
 
 export const MissingImageLogo = styled.div<{ size?: string }>`
@@ -28,6 +30,16 @@ const LogoImage = styled.img<{ size: string; imgLoaded?: boolean }>`
   border-radius: 50%;
 `
 
+const POLYGON_CHAIN_URL = 'https://assets.debank.com/static/media/polygon.31b1e7a0.svg'
+
+const ChainLogo = styled.img`
+  width: 14px;
+  height: 14px;
+  right: -4px;
+  bottom: -4px;
+  position: absolute;
+`
+
 const LogoImageWrapper = styled.div<{ size: string; imgLoaded?: boolean }>`
   width: ${({ size }) => size};
   height: ${({ size }) => size};
@@ -44,7 +56,13 @@ export type AssetLogoBaseProps = {
   style?: React.CSSProperties
   hideL2Icon?: boolean
 }
-type AssetLogoProps = AssetLogoBaseProps & { isNative?: boolean; address?: string | null; chainId?: number }
+type AssetLogoProps = AssetLogoBaseProps & {
+  isNative?: boolean
+  address?: string | null
+  chainId?: number
+  isInputCurrency?: boolean
+  isOutputCurrency?: boolean
+}
 
 const LogoContainer = styled.div`
   position: relative;
@@ -75,6 +93,8 @@ export default function AssetLogo({
   backupImg,
   size = '24px',
   style,
+  isInputCurrency,
+  isOutputCurrency,
   hideL2Icon = false,
 }: AssetLogoProps) {
   const [src, nextSrc] = useTokenLogoSource(address, chainId, isNative, backupImg)
@@ -84,6 +104,9 @@ export default function AssetLogo({
     img.src = src ?? ''
     return src ? img.complete : false
   })
+  const { sourceChainId } = peazeStore()
+  const { chainId: targetChainId } = usePeazeReact()
+  const iconChainId = isOutputCurrency ? targetChainId : isInputCurrency ? sourceChainId : null
 
   return (
     <LogoContainer style={{ height: size, width: size, ...style }}>
@@ -97,6 +120,12 @@ export default function AssetLogo({
             onError={nextSrc}
             imgLoaded={imgLoaded}
           />
+          {iconChainId && (
+            <ChainLogo
+              src={iconChainId === 137 ? POLYGON_CHAIN_URL : getChainInfo(iconChainId)?.logoUrl}
+              alt="Polygon"
+            />
+          )}
         </LogoImageWrapper>
       ) : (
         <MissingImageLogo size={size}>

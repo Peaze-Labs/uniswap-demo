@@ -1,6 +1,5 @@
 import { Trans } from '@lingui/macro'
 import { InterfacePageName } from '@uniswap/analytics-events'
-import { useWeb3React } from '@web3-react/core'
 import { Trace } from 'analytics'
 import { useToggleAccountDrawer } from 'components/AccountDrawer'
 import { ButtonPrimary } from 'components/Button'
@@ -11,6 +10,7 @@ import { ProfilePageLoadingSkeleton } from 'nft/components/profile/view/ProfileP
 import { useBag, useProfilePageState, useSellAsset, useWalletCollections } from 'nft/hooks'
 import { ProfilePageStateType } from 'nft/types'
 import { Suspense, useEffect, useRef } from 'react'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled from 'styled-components'
 import { BREAKPOINTS, ThemedText } from 'theme'
 
@@ -65,7 +65,7 @@ const ProfileContent = () => {
   const resetSellAssets = useSellAsset((state) => state.reset)
   const clearCollectionFilters = useWalletCollections((state) => state.clearCollectionFilters)
 
-  const { account } = useWeb3React()
+  const { account } = usePeazeReact()
   const accountRef = useRef(account)
   const toggleWalletDrawer = useToggleAccountDrawer()
 

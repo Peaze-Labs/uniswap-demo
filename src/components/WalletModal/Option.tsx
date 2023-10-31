@@ -1,10 +1,10 @@
 import { BrowserEvent, InterfaceElementName, InterfaceEventName } from '@uniswap/analytics-events'
-import { useWeb3React } from '@web3-react/core'
 import { TraceEvent } from 'analytics'
 import { useToggleAccountDrawer } from 'components/AccountDrawer'
 import Loader from 'components/Icons/LoadingSpinner'
 import { ActivationStatus, useActivationState } from 'connection/activate'
 import { Connection } from 'connection/types'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled from 'styled-components'
 import { useIsDarkMode } from 'theme/components/ThemeToggle'
 import { flexColumnNoWrap, flexRowNoWrap } from 'theme/styles'
@@ -81,7 +81,7 @@ interface OptionProps {
 export default function Option({ connection }: OptionProps) {
   const { activationState, tryActivation } = useActivationState()
   const toggleAccountDrawer = useToggleAccountDrawer()
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const activate = () => tryActivation(connection, toggleAccountDrawer, chainId)
 
   const isSomeOptionPending = activationState.status === ActivationStatus.PENDING

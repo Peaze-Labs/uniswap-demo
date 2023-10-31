@@ -1,5 +1,4 @@
 import { CustomUserProperties, getBrowser, SharedEventName } from '@uniswap/analytics-events'
-import { useWeb3React } from '@web3-react/core'
 import { getDeviceId, sendAnalyticsEvent, Trace, user } from 'analytics'
 import Loader from 'components/Icons/LoadingSpinner'
 import TopLevelModals from 'components/TopLevelModals'
@@ -10,6 +9,7 @@ import { useBag } from 'nft/hooks/useBag'
 import { lazy, Suspense, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { Navigate, Route, Routes, useLocation, useSearchParams } from 'react-router-dom'
 import { shouldDisableNFTRoutesAtom } from 'state/application/atoms'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { useRouterPreference } from 'state/user/hooks'
 import { StatsigProvider, StatsigUser } from 'statsig-react'
 import styled from 'styled-components'
@@ -179,7 +179,7 @@ export default function App() {
   const isBagExpanded = useBag((state) => state.bagExpanded)
   const isHeaderTransparent = !scrolledState && !isBagExpanded
 
-  const { account } = useWeb3React()
+  const { account } = usePeazeReact()
   const statsigUser: StatsigUser = useMemo(
     () => ({
       userID: getDeviceId(),

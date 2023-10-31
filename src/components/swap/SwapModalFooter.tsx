@@ -1,7 +1,6 @@
 import { Plural, t, Trans } from '@lingui/macro'
 import { BrowserEvent, InterfaceElementName, SwapEventName } from '@uniswap/analytics-events'
 import { Percent, TradeType } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { TraceEvent } from 'analytics'
 import Column from 'components/Column'
 import { MouseoverTooltip, TooltipSize } from 'components/Tooltip'
@@ -11,6 +10,7 @@ import useTransactionDeadline from 'hooks/useTransactionDeadline'
 import useNativeCurrency from 'lib/hooks/useNativeCurrency'
 import { ReactNode } from 'react'
 import { AlertTriangle } from 'react-feather'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { ClassicTrade, InterfaceTrade, RouterPreference } from 'state/routing/types'
 import { getTransactionCount, isClassicTrade } from 'state/routing/utils'
 import { useRouterPreference, useUserSlippageTolerance } from 'state/user/hooks'
@@ -76,7 +76,7 @@ export default function SwapModalFooter({
   const [routerPreference] = useRouterPreference()
   const routes = isClassicTrade(trade) ? getRoutingDiagramEntries(trade) : undefined
   const theme = useTheme()
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const nativeCurrency = useNativeCurrency(chainId)
   const { formatNumber } = useFormatter()
 

@@ -1,7 +1,7 @@
 import { Trans } from '@lingui/macro'
-import { useWeb3React } from '@web3-react/core'
 import { useState } from 'react'
 import { ArrowUpCircle, X } from 'react-feather'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled, { useTheme } from 'styled-components'
 
 import Circle from '../../assets/images/blue-loader.svg'
@@ -41,7 +41,7 @@ interface QueueModalProps {
 }
 
 export default function QueueModal({ isOpen, onDismiss, proposalId }: QueueModalProps) {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const queueCallback = useQueueCallback()
 
   // monitor call to help UI loading state

@@ -1,6 +1,5 @@
 import { Trans } from '@lingui/macro'
 import { Percent } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { ReactNode } from 'react'
 import { ArrowLeft } from 'react-feather'
 import { Link, useLocation } from 'react-router-dom'
@@ -8,6 +7,7 @@ import { Box } from 'rebass'
 import { useAppDispatch } from 'state/hooks'
 import { resetMintState } from 'state/mint/actions'
 import { resetMintState as resetMintV3State } from 'state/mint/v3/actions'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled, { useTheme } from 'styled-components'
 import { ThemedText } from 'theme'
 import { flexRowNoWrap } from 'theme/styles'
@@ -75,7 +75,7 @@ export function AddRemoveTabs({
   showBackLink?: boolean
   children?: ReactNode
 }) {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const theme = useTheme()
   // reset states on back
   const dispatch = useAppDispatch()

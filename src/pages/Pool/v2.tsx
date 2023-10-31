@@ -1,7 +1,6 @@
 import { Trans } from '@lingui/macro'
 import { InterfacePageName } from '@uniswap/analytics-events'
 import { Pair } from '@uniswap/v2-sdk'
-import { useWeb3React } from '@web3-react/core'
 import { Trace } from 'analytics'
 import { V2Unsupported } from 'components/V2Unsupported'
 import { useNetworkSupportsV2 } from 'hooks/useNetworkSupportsV2'
@@ -10,6 +9,7 @@ import { useMemo } from 'react'
 import { ChevronsRight } from 'react-feather'
 import { Link } from 'react-router-dom'
 import { Text } from 'rebass'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled, { useTheme } from 'styled-components'
 
 import { ButtonOutlined, ButtonPrimary, ButtonSecondary } from '../../components/Button'
@@ -89,7 +89,7 @@ const EmptyProposals = styled.div`
 
 export default function Pool() {
   const theme = useTheme()
-  const { account } = useWeb3React()
+  const { account } = usePeazeReact()
   const networkSupportsV2 = useNetworkSupportsV2()
 
   // fetch the user's balances of all tracked V2 LP tokens

@@ -1,19 +1,19 @@
 import { InterfaceEventName } from '@uniswap/analytics-events'
 import { ChainId, Percent } from '@uniswap/sdk-core'
 import { WETH_ADDRESS as getWethAddress } from '@uniswap/universal-router-sdk'
-import { useWeb3React } from '@web3-react/core'
 import FOT_DETECTOR_ABI from 'abis/fee-on-transfer-detector.json'
 import { FeeOnTransferDetector } from 'abis/types'
 import { sendAnalyticsEvent } from 'analytics'
 import { ZERO_PERCENT } from 'constants/misc'
 import { useEffect, useState } from 'react'
+import { usePeazeReact } from 'state/peaze/hooks'
 
 import { useContract } from './useContract'
 
 const FEE_ON_TRANSFER_DETECTOR_ADDRESS = '0x19C97dc2a25845C7f9d1d519c8C2d4809c58b43f'
 
 function useFeeOnTransferDetectorContract(): FeeOnTransferDetector | null {
-  const { account } = useWeb3React()
+  const { account } = usePeazeReact()
   const contract = useContract<FeeOnTransferDetector>(FEE_ON_TRANSFER_DETECTOR_ADDRESS, FOT_DETECTOR_ABI)
 
   useEffect(() => {
@@ -72,7 +72,7 @@ async function getSwapTaxes(
 export function useSwapTaxes(inputTokenAddress: string | undefined, outputTokenAddress: string | undefined) {
   const fotDetector = useFeeOnTransferDetectorContract()
   const [{ inputTax, outputTax }, setTaxes] = useState({ inputTax: ZERO_PERCENT, outputTax: ZERO_PERCENT })
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
 
   useEffect(() => {
     if (!fotDetector || chainId !== ChainId.MAINNET) return

@@ -1,9 +1,9 @@
 import { Trans } from '@lingui/macro'
-import { useWeb3React } from '@web3-react/core'
 import { useCallback, useEffect, useState } from 'react'
 import { useHref } from 'react-router-dom'
 import { useCloseModal, useModalIsOpen } from 'state/application/hooks'
 import { ApplicationModal } from 'state/application/reducer'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled, { useTheme } from 'styled-components'
 import { CustomLightSpinner, ThemedText } from 'theme'
 import { useIsDarkMode } from 'theme/components/ThemeToggle'
@@ -70,7 +70,7 @@ const MOONPAY_SUPPORTED_CURRENCY_CODES = [
 ]
 
 export default function FiatOnrampModal() {
-  const { account } = useWeb3React()
+  const { account } = usePeazeReact()
   const theme = useTheme()
   const isDarkMode = useIsDarkMode()
   const closeModal = useCloseModal()

@@ -1,9 +1,9 @@
 import { createMulticall, ListenerOptions } from '@uniswap/redux-multicall'
 import { ChainId } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { useInterfaceMulticall, useMainnetInterfaceMulticall } from 'hooks/useContract'
 import useBlockNumber, { useMainnetBlockNumber } from 'lib/hooks/useBlockNumber'
 import { useMemo } from 'react'
+import { usePeazeReact } from 'state/peaze/hooks'
 
 const multicall = createMulticall()
 
@@ -31,7 +31,7 @@ function getBlocksPerFetchForChainId(chainId: number | undefined): number {
 }
 
 export function MulticallUpdater() {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const latestBlockNumber = useBlockNumber()
   const latestMainnetBlockNumber = useMainnetBlockNumber()
   const contract = useInterfaceMulticall()

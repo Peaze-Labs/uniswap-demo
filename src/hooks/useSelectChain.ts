@@ -1,5 +1,4 @@
 import { ChainId } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { getConnection } from 'connection'
 import { didUserReject } from 'connection/utils'
 import { CHAIN_IDS_TO_NAMES, isSupportedChain } from 'constants/chains'
@@ -7,13 +6,14 @@ import { useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { addPopup, PopupType } from 'state/application/reducer'
 import { useAppDispatch } from 'state/hooks'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { peazeStore } from 'state/peaze/store'
 
 import { useSwitchChain } from './useSwitchChain'
 
 export default function useSelectChain() {
   const dispatch = useAppDispatch()
-  const { connector } = useWeb3React()
+  const { connector } = usePeazeReact()
   const switchChain = useSwitchChain()
   const [searchParams, setSearchParams] = useSearchParams()
   const { isPeazeSigning } = peazeStore()

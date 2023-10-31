@@ -1,5 +1,4 @@
 import { Trans } from '@lingui/macro'
-import { useWeb3React } from '@web3-react/core'
 import Column from 'components/Column'
 import UniswapXBrandMark from 'components/Logo/UniswapXBrandMark'
 import { RowBetween, RowFixed } from 'components/Row'
@@ -7,6 +6,7 @@ import Toggle from 'components/Toggle'
 import { isUniswapXSupportedChain } from 'constants/chains'
 import { useUniswapXDefaultEnabled } from 'featureFlags/flags/uniswapXDefault'
 import { useAppDispatch } from 'state/hooks'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { RouterPreference } from 'state/routing/types'
 import { useRouterPreference, useUserDisabledUniswapX } from 'state/user/hooks'
 import { updateDisabledUniswapX } from 'state/user/reducer'
@@ -23,7 +23,7 @@ const InlineLink = styled(ThemedText.BodySmall)`
 `
 
 export default function RouterPreferenceSettings() {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const [routerPreference, setRouterPreference] = useRouterPreference()
   const uniswapXEnabled = chainId && isUniswapXSupportedChain(chainId)
   const dispatch = useAppDispatch()

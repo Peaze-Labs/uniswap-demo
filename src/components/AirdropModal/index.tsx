@@ -1,7 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import type { TransactionResponse } from '@ethersproject/providers'
 import { UNISWAP_NFT_AIRDROP_CLAIM_ADDRESS } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import uniswapNftAirdropClaim from 'abis/uniswap-nft-airdrop-claim.json'
 import airdropBackgroundv2 from 'assets/images/airdopBackground.png'
 import { ButtonEmphasis, ButtonSize, ThemeButton } from 'components/Button'
@@ -16,6 +15,7 @@ import { useEffect, useState } from 'react'
 import { AlertTriangle } from 'react-feather'
 import { useModalIsOpen, useToggleModal } from 'state/application/hooks'
 import { ApplicationModal } from 'state/application/reducer'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled from 'styled-components'
 import { CloseIcon, ThemedText } from 'theme'
 
@@ -181,7 +181,7 @@ enum RewardAmounts {
 }
 
 const AirdropModal = () => {
-  const { account, provider } = useWeb3React()
+  const { account, provider } = usePeazeReact()
   const [claim, setClaim] = useState<Rewards>()
   const [isClaimed, setIsClaimed] = useState(false)
   const [hash, setHash] = useState('')

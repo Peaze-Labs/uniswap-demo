@@ -1,12 +1,12 @@
 import { t, Trans } from '@lingui/macro'
 import { ChainId, Currency } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import Badge from 'components/Badge'
 import { getChainInfo } from 'constants/chainInfo'
 import { SupportedL2ChainId } from 'constants/chains'
 import useCurrencyLogoURIs from 'lib/hooks/useCurrencyLogoURIs'
 import { ReactNode, useCallback, useState } from 'react'
 import { AlertCircle, ArrowUpCircle, CheckCircle } from 'react-feather'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { useIsTransactionConfirmed, useTransaction } from 'state/transactions/hooks'
 import styled, { useTheme } from 'styled-components'
 import { isL2ChainId } from 'utils/chains'
@@ -100,7 +100,7 @@ function TransactionSubmittedContent({
 }) {
   const theme = useTheme()
 
-  const { connector } = useWeb3React()
+  const { connector } = usePeazeReact()
 
   const token = currencyToAdd?.wrapped
   const logoURL = useCurrencyLogoURIs(token)[0]
@@ -317,7 +317,7 @@ export default function TransactionConfirmationModal({
   reviewContent,
   currencyToAdd,
 }: ConfirmationModalProps) {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
 
   if (!chainId) return null
 

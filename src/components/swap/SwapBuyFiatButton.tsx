@@ -1,11 +1,11 @@
 import { Trans } from '@lingui/macro'
 import { BrowserEvent, InterfaceElementName, SharedEventName } from '@uniswap/analytics-events'
-import { useWeb3React } from '@web3-react/core'
 import { TraceEvent } from 'analytics'
 import { useAccountDrawer } from 'components/AccountDrawer'
 import { ButtonText } from 'components/Button'
 import { MouseoverTooltip } from 'components/Tooltip'
 import { useCallback, useEffect, useState } from 'react'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled from 'styled-components'
 import { ExternalLink } from 'theme'
 
@@ -37,7 +37,7 @@ const StyledTextButton = styled(ButtonText)`
 `
 
 export default function SwapBuyFiatButton() {
-  const { account } = useWeb3React()
+  const { account } = usePeazeReact()
   const openFiatOnRampModal = useOpenModal(ApplicationModal.FIAT_ONRAMP)
   const [checkFiatRegionAvailability, setCheckFiatRegionAvailability] = useState(false)
   const {

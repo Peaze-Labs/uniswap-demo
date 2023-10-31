@@ -3,10 +3,10 @@ import * as Sentry from '@sentry/react'
 import { SwapEventName } from '@uniswap/analytics-events'
 import { Percent } from '@uniswap/sdk-core'
 import { DutchOrder, DutchOrderBuilder } from '@uniswap/uniswapx-sdk'
-import { useWeb3React } from '@web3-react/core'
 import { sendAnalyticsEvent, useTrace } from 'analytics'
 import { formatSwapSignedAnalyticsEventProperties } from 'lib/utils/analytics'
 import { useCallback } from 'react'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { DutchOrderTrade, TradeFillType } from 'state/routing/types'
 import { trace } from 'tracing/trace'
 import { UserRejectedRequestError } from 'utils/errors'
@@ -53,7 +53,7 @@ export function useUniswapXSwapCallback({
   fiatValues: { amountIn?: number; amountOut?: number }
   allowedSlippage: Percent
 }) {
-  const { account, provider } = useWeb3React()
+  const { account, provider } = usePeazeReact()
   const analyticsContext = useTrace()
 
   return useCallback(

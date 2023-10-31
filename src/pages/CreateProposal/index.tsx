@@ -3,7 +3,6 @@ import { getAddress, isAddress } from '@ethersproject/address'
 import { Trans } from '@lingui/macro'
 import { InterfacePageName } from '@uniswap/analytics-events'
 import { Currency, CurrencyAmount, Token } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { Trace } from 'analytics'
 import { ButtonError } from 'components/Button'
 import { BlueCard } from 'components/Card'
@@ -23,6 +22,7 @@ import {
   useProposalThreshold,
   useUserVotes,
 } from 'state/governance/hooks'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled from 'styled-components'
 import { ExternalLink, ThemedText } from 'theme'
 
@@ -118,7 +118,7 @@ const AutonomousProposalCTA = styled.div`
 `
 
 export default function CreateProposal() {
-  const { account, chainId } = useWeb3React()
+  const { account, chainId } = usePeazeReact()
 
   const latestProposalId = useLatestProposalId(account ?? undefined) ?? '0'
   const latestProposalData = useProposalData(LATEST_GOVERNOR_INDEX, latestProposalId)

@@ -1,11 +1,11 @@
 import { TransactionReceipt } from '@ethersproject/abstract-provider'
-import { useWeb3React } from '@web3-react/core'
 import { useTrace } from 'analytics'
 import { DEFAULT_TXN_DISMISS_MS, L2_TXN_DISMISS_MS } from 'constants/misc'
 import LibUpdater from 'lib/hooks/transactions/updater'
 import { useCallback, useMemo } from 'react'
 import { PopupType } from 'state/application/reducer'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { logSwapSuccess } from 'tracing/swapFlowLoggers'
 
 import { L2_CHAIN_IDS } from '../../constants/chains'
@@ -29,7 +29,7 @@ export function toSerializableReceipt(receipt: TransactionReceipt): Serializable
 
 export default function Updater() {
   const analyticsContext = useTrace()
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const addPopup = useAddPopup()
   // speed up popup dismisall time if on L2
   const isL2 = Boolean(chainId && L2_CHAIN_IDS.includes(chainId))

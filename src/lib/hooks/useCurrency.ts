@@ -2,13 +2,13 @@ import { arrayify } from '@ethersproject/bytes'
 import { parseBytes32String } from '@ethersproject/strings'
 import { InterfaceEventName } from '@uniswap/analytics-events'
 import { ChainId, Currency, Token } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { sendAnalyticsEvent } from 'analytics'
 import { asSupportedChain, isSupportedChain } from 'constants/chains'
 import { useBytes32TokenContract, useTokenContract } from 'hooks/useContract'
 import { NEVER_RELOAD, useSingleCallResult } from 'lib/hooks/multicall'
 import useNativeCurrency from 'lib/hooks/useNativeCurrency'
 import { useEffect, useMemo } from 'react'
+import { usePeazeReact } from 'state/peaze/hooks'
 
 import { DEFAULT_ERC20_DECIMALS } from '../../constants/tokens'
 import { TOKEN_SHORTHANDS } from '../../constants/tokens'
@@ -35,7 +35,7 @@ const UNKNOWN_TOKEN_NAME = 'Unknown Token'
  * Returns undefined if tokenAddress is invalid or token does not exist.
  */
 export function useTokenFromActiveNetwork(tokenAddress: string | undefined): Token | null | undefined {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
 
   const formattedAddress = isAddress(tokenAddress)
   const tokenContract = useTokenContract(formattedAddress ? formattedAddress : undefined, false)

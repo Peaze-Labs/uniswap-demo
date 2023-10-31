@@ -1,7 +1,6 @@
 import { Trans } from '@lingui/macro'
 import { InterfacePageName } from '@uniswap/analytics-events'
 import { CurrencyAmount, Token } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { Trace } from 'analytics'
 import { ButtonPrimary } from 'components/Button'
 import { AutoColumn } from 'components/Column'
@@ -23,6 +22,7 @@ import { ApplicationModal } from 'state/application/reducer'
 import { useTokenBalance } from 'state/connection/hooks'
 import { ProposalData, ProposalState } from 'state/governance/hooks'
 import { useAllProposalData, useUserDelegatee, useUserVotes } from 'state/governance/hooks'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled, { useTheme } from 'styled-components'
 import { ExternalLink, ThemedText } from 'theme'
 import { shortenAddress } from 'utils'
@@ -120,7 +120,7 @@ const StyledExternalLink = styled(ExternalLink)`
 
 export default function Landing() {
   const theme = useTheme()
-  const { account, chainId } = useWeb3React()
+  const { account, chainId } = usePeazeReact()
 
   const [hideCancelled, setHideCancelled] = useState(true)
 

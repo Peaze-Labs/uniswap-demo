@@ -1,7 +1,6 @@
 import { t } from '@lingui/macro'
 import { BrowserEvent, InterfaceElementName, SharedEventName } from '@uniswap/analytics-events'
 import { Position } from '@uniswap/v3-sdk'
-import { useWeb3React } from '@web3-react/core'
 import { TraceEvent } from 'analytics'
 import { useToggleAccountDrawer } from 'components/AccountDrawer'
 import Row from 'components/Row'
@@ -11,6 +10,7 @@ import { useSwitchChain } from 'hooks/useSwitchChain'
 import { EmptyWalletModule } from 'nft/components/profile/view/EmptyWalletContent'
 import { useCallback, useMemo, useReducer } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled from 'styled-components'
 import { ThemedText } from 'theme'
 import { NumberType, useFormatter } from 'utils/formatNumbers'
@@ -127,7 +127,7 @@ function PositionListItem({ positionInfo }: { positionInfo: PositionInfo }) {
 
   const navigate = useNavigate()
   const toggleWalletDrawer = useToggleAccountDrawer()
-  const { chainId: walletChainId, connector } = useWeb3React()
+  const { chainId: walletChainId, connector } = usePeazeReact()
   const switchChain = useSwitchChain()
   const onClick = useCallback(async () => {
     if (walletChainId !== chainId) await switchChain(connector, chainId)

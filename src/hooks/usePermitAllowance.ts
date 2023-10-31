@@ -1,12 +1,12 @@
 import { AllowanceTransfer, MaxAllowanceTransferAmount, PERMIT2_ADDRESS, PermitSingle } from '@uniswap/permit2-sdk'
 import { CurrencyAmount, Token } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import PERMIT2_ABI from 'abis/permit2.json'
 import { Permit2 } from 'abis/types'
 import { useContract } from 'hooks/useContract'
 import { useSingleCallResult } from 'lib/hooks/multicall'
 import ms from 'ms'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { toReadableError, UserRejectedRequestError } from 'utils/errors'
 import { signTypedData } from 'utils/signing'
 import { didUserReject } from 'utils/swapErrorToUserReadableMessage'
@@ -56,7 +56,7 @@ export function useUpdatePermitAllowance(
   nonce: number | undefined,
   onPermitSignature: (signature: PermitSignature) => void
 ) {
-  const { account, chainId, provider } = useWeb3React()
+  const { account, chainId, provider } = usePeazeReact()
   return useCallback(async () => {
     try {
       if (!chainId) throw new Error('missing chainId')

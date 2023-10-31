@@ -1,9 +1,9 @@
 import { isAddress } from '@ethersproject/address'
 import { Trans } from '@lingui/macro'
 import { CurrencyAmount, Token } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { useState } from 'react'
 import { Text } from 'rebass'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled from 'styled-components'
 import { shortenAddress } from 'utils'
 
@@ -45,7 +45,7 @@ const ConfirmedIcon = styled(ColumnCenter)`
 `
 
 export default function AddressClaimModal({ isOpen, onDismiss }: { isOpen: boolean; onDismiss: () => void }) {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
 
   // state for smart contract input
   const [typed, setTyped] = useState('')

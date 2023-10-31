@@ -1,6 +1,5 @@
 import { Trans } from '@lingui/macro'
 import { InterfaceModalName, NFTEventName } from '@uniswap/analytics-events'
-import { useWeb3React } from '@web3-react/core'
 import { sendAnalyticsEvent, Trace, useTrace } from 'analytics'
 import { useStablecoinValue } from 'hooks/useStablecoinPrice'
 import useNativeCurrency from 'lib/hooks/useNativeCurrency'
@@ -12,6 +11,7 @@ import { useNFTList, useSellAsset } from 'nft/hooks'
 import { ListingStatus } from 'nft/types'
 import { useCallback, useEffect, useMemo, useReducer } from 'react'
 import { X } from 'react-feather'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled from 'styled-components'
 import { BREAKPOINTS, ThemedText } from 'theme'
 import { Z_INDEX } from 'theme/zIndex'
@@ -44,7 +44,7 @@ const ListModalWrapper = styled.div`
 `
 
 export const ListModal = ({ overlayClick }: { overlayClick: () => void }) => {
-  const { provider, chainId } = useWeb3React()
+  const { provider, chainId } = usePeazeReact()
   const signer = provider?.getSigner()
   const trace = useTrace({ modal: InterfaceModalName.NFT_LISTING })
   const { formatCurrencyAmount } = useFormatter()

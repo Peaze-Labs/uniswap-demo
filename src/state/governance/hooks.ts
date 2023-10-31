@@ -16,7 +16,6 @@ import {
   GOVERNANCE_BRAVO_ADDRESSES,
   Token,
 } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import GOVERNOR_BRAVO_ABI from 'abis/governor-bravo.json'
 import { LATEST_GOVERNOR_INDEX } from 'constants/governance'
 import { POLYGON_PROPOSAL_TITLE } from 'constants/proposals/polygon_proposal_title'
@@ -24,6 +23,7 @@ import { UNISWAP_GRANTS_PROPOSAL_DESCRIPTION } from 'constants/proposals/uniswap
 import { useContract } from 'hooks/useContract'
 import { useSingleCallResult, useSingleContractMultipleData } from 'lib/hooks/multicall'
 import { useCallback, useMemo } from 'react'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { calculateGasMargin } from 'utils/calculateGasMargin'
 
 import {
@@ -54,7 +54,7 @@ function useGovernanceBravoContract(): Contract | null {
 const useLatestGovernanceContract = useGovernanceBravoContract
 
 function useUniContract() {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const uniAddress = useMemo(() => (chainId ? UNI[chainId]?.address : undefined), [chainId])
   return useContract(uniAddress, UniJSON.abi, true)
 }
@@ -231,7 +231,7 @@ function countToIndices(count: number | undefined, skip = 0) {
 
 // get data for all past and active proposals
 export function useAllProposalData(): { data: ProposalData[]; loading: boolean } {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const gov0 = useGovernanceV0Contract()
   const gov1 = useGovernanceV1Contract()
   const gov2 = useGovernanceBravoContract()
@@ -339,7 +339,7 @@ export function useProposalData(governorIndex: number, id: string): ProposalData
 export function useQuorum(governorIndex: number): CurrencyAmount<Token> | undefined {
   const latestGovernanceContract = useLatestGovernanceContract()
   const quorumVotes = useSingleCallResult(latestGovernanceContract, 'quorumVotes')?.result?.[0]
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const uni = useMemo(() => (chainId ? UNI[chainId] : undefined), [chainId])
 
   if (
@@ -356,7 +356,7 @@ export function useQuorum(governorIndex: number): CurrencyAmount<Token> | undefi
 
 // get the users delegatee if it exists
 export function useUserDelegatee(): string {
-  const { account } = useWeb3React()
+  const { account } = usePeazeReact()
   const uniContract = useUniContract()
   const { result } = useSingleCallResult(uniContract, 'delegates', [account ?? undefined])
   return result?.[0] ?? undefined
@@ -364,7 +364,7 @@ export function useUserDelegatee(): string {
 
 // gets the users current votes
 export function useUserVotes(): { loading: boolean; votes?: CurrencyAmount<Token> } {
-  const { account, chainId } = useWeb3React()
+  const { account, chainId } = usePeazeReact()
   const uniContract = useUniContract()
 
   // check for available votes
@@ -377,7 +377,7 @@ export function useUserVotes(): { loading: boolean; votes?: CurrencyAmount<Token
 
 // fetch available votes as of block (usually proposal start block)
 export function useUserVotesAsOfBlock(block: number | undefined): CurrencyAmount<Token> | undefined {
-  const { account, chainId } = useWeb3React()
+  const { account, chainId } = usePeazeReact()
   const uniContract = useUniContract()
 
   // check for available votes
@@ -388,7 +388,7 @@ export function useUserVotesAsOfBlock(block: number | undefined): CurrencyAmount
 }
 
 export function useDelegateCallback(): (delegatee: string | undefined) => undefined | Promise<string> {
-  const { account, chainId, provider } = useWeb3React()
+  const { account, chainId, provider } = usePeazeReact()
   const addTransaction = useTransactionAdder()
 
   const uniContract = useUniContract()
@@ -418,7 +418,7 @@ export function useVoteCallback(): (
   proposalId: string | undefined,
   voteOption: VoteOption
 ) => undefined | Promise<string> {
-  const { account, chainId } = useWeb3React()
+  const { account, chainId } = usePeazeReact()
   const latestGovernanceContract = useLatestGovernanceContract()
   const addTransaction = useTransactionAdder()
 
@@ -446,7 +446,7 @@ export function useVoteCallback(): (
 }
 
 export function useQueueCallback(): (proposalId: string | undefined) => undefined | Promise<string> {
-  const { account, chainId } = useWeb3React()
+  const { account, chainId } = usePeazeReact()
   const latestGovernanceContract = useLatestGovernanceContract()
   const addTransaction = useTransactionAdder()
 
@@ -472,7 +472,7 @@ export function useQueueCallback(): (proposalId: string | undefined) => undefine
 }
 
 export function useExecuteCallback(): (proposalId: string | undefined) => undefined | Promise<string> {
-  const { account, chainId } = useWeb3React()
+  const { account, chainId } = usePeazeReact()
   const latestGovernanceContract = useLatestGovernanceContract()
   const addTransaction = useTransactionAdder()
 
@@ -500,7 +500,7 @@ export function useExecuteCallback(): (proposalId: string | undefined) => undefi
 export function useCreateProposalCallback(): (
   createProposalData: CreateProposalData | undefined
 ) => undefined | Promise<string> {
-  const { account, chainId } = useWeb3React()
+  const { account, chainId } = usePeazeReact()
   const latestGovernanceContract = useLatestGovernanceContract()
   const addTransaction = useTransactionAdder()
 
@@ -538,7 +538,7 @@ export function useLatestProposalId(address: string | undefined): string | undef
 }
 
 export function useProposalThreshold(): CurrencyAmount<Token> | undefined {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
 
   const latestGovernanceContract = useLatestGovernanceContract()
   const res = useSingleCallResult(latestGovernanceContract, 'proposalThreshold')

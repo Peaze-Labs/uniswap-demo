@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios'
 
-const PEAZE_API_URL = process.env.REACT_APP_PEAZE_API_URL ?? 'https://api-6ws6-staging.zeet-peaze.zeet.app/api'
+const PEAZE_API_URL = process.env.REACT_APP_PEAZE_API_URL ?? 'https://api.peaze.com/api'
 
 function createAxiosClient(): AxiosInstance {
   return axios.create({

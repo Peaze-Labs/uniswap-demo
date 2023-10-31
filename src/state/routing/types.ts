@@ -136,6 +136,7 @@ export function isClassicQuoteResponse(data: URAQuoteResponse): data is URAClass
 export enum TradeFillType {
   Classic = 'classic', // Uniswap V1, V2, and V3 trades with on-chain routes
   UniswapX = 'uniswap_x', // off-chain trades, no routes
+  Peaze = 'peaze',
 }
 
 export type ApproveInfo = { needsApprove: true; approveGasEstimateUSD: number } | { needsApprove: false }

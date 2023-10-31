@@ -1,5 +1,5 @@
 import { ChainId } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled from 'styled-components'
 import { MEDIA_WIDTHS } from 'theme'
 
@@ -61,7 +61,7 @@ export default function Popups() {
   const urlWarningActive = useURLWarningVisible()
 
   // need extra padding if network is not L1 Ethereum
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const isNotOnMainnet = Boolean(chainId && chainId !== ChainId.MAINNET)
 
   return (

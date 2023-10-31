@@ -6,6 +6,8 @@ import AssetLogo, { AssetLogoBaseProps } from './AssetLogo'
 export default function CurrencyLogo(
   props: AssetLogoBaseProps & {
     currency?: Currency | null
+    isInputCurrency?: boolean
+    isOutputCurrency?: boolean
   }
 ) {
   return (
@@ -16,6 +18,8 @@ export default function CurrencyLogo(
       symbol={props.symbol ?? props.currency?.symbol}
       backupImg={(props.currency as TokenInfo)?.logoURI}
       hideL2Icon={props.hideL2Icon ?? true}
+      isInputCurrency={props.isInputCurrency}
+      isOutputCurrency={props.isOutputCurrency}
       {...props}
     />
   )

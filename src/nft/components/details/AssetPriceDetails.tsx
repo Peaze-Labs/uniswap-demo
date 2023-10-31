@@ -1,5 +1,4 @@
 import { NFTEventName } from '@uniswap/analytics-events'
-import { useWeb3React } from '@web3-react/core'
 import { sendAnalyticsEvent, useTrace } from 'analytics'
 import { OpacityHoverState } from 'components/Common'
 import { Share } from 'components/Icons/Share'
@@ -16,6 +15,7 @@ import {
 } from 'nft/utils'
 import { useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { usePeazeReact } from 'state/peaze/hooks'
 import styled, { css, useTheme } from 'styled-components'
 import { ExternalLink, ThemedText } from 'theme'
 import { shortenAddress } from 'utils/addresses'
@@ -310,7 +310,7 @@ const NotForSale = ({ collectionName, collectionUrl }: { collectionName: string;
 }
 
 export const AssetPriceDetails = ({ asset, collection }: AssetPriceDetailsProps) => {
-  const { account } = useWeb3React()
+  const { account } = usePeazeReact()
 
   const cheapestOrder = asset.sellorders && asset.sellorders.length > 0 ? asset.sellorders[0] : undefined
   const expirationDate = cheapestOrder?.endAt ? new Date(cheapestOrder.endAt) : undefined

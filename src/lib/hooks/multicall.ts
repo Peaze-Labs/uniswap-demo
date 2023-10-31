@@ -1,7 +1,7 @@
 import { ChainId } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import useBlockNumber, { useMainnetBlockNumber } from 'lib/hooks/useBlockNumber'
 import multicall from 'lib/state/multicall'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { SkipFirst } from 'types/tuple'
 
 export type { CallStateResult } from '@uniswap/redux-multicall' // re-export for convenience
@@ -36,7 +36,7 @@ export function useSingleContractMultipleData(
 }
 
 function useCallContext() {
-  const { chainId } = useWeb3React()
+  const { chainId } = usePeazeReact()
   const latestBlock = useBlockNumber()
   return { chainId, latestBlock }
 }

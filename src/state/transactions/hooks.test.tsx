@@ -1,9 +1,9 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { PERMIT2_ADDRESS } from '@uniswap/permit2-sdk'
 import { ChainId } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
 import { USDC_MAINNET } from 'constants/tokens'
 import store from 'state'
+import { usePeazeReact } from 'state/peaze/hooks'
 import { mocked } from 'test-utils/mocked'
 import { act, renderHook } from 'test-utils/render'
 
@@ -46,7 +46,7 @@ const mockRevocationTransactionInfo: TransactionInfo = {
 
 describe('Transactions hooks', () => {
   beforeEach(() => {
-    mocked(useWeb3React).mockReturnValue({ chainId: 1, account: '0x123' } as ReturnType<typeof useWeb3React>)
+    mocked(usePeazeReact).mockReturnValue({ chainId: 1, account: '0x123' } as ReturnType<typeof usePeazeReact>)
 
     jest.useFakeTimers()
     store.dispatch(clearAllTransactions({ chainId: ChainId.MAINNET }))
@@ -120,7 +120,7 @@ describe('Transactions hooks', () => {
     })
 
     it('returns false when there is a pending approval but it is not for the current chain', () => {
-      mocked(useWeb3React).mockReturnValue({ chainId: 2 } as ReturnType<typeof useWeb3React>)
+      mocked(usePeazeReact).mockReturnValue({ chainId: 2 } as ReturnType<typeof usePeazeReact>)
       addPendingTransaction(mockApprovalTransactionInfo)
       const { result } = renderHook(() => useHasPendingApproval(USDC_MAINNET, PERMIT2_ADDRESS))
       expect(result.current).toBe(false)
@@ -160,7 +160,7 @@ describe('Transactions hooks', () => {
     })
 
     it('returns false when there is a pending revocation but it is not for the current chain', () => {
-      mocked(useWeb3React).mockReturnValue({ chainId: 2 } as ReturnType<typeof useWeb3React>)
+      mocked(usePeazeReact).mockReturnValue({ chainId: 2 } as ReturnType<typeof usePeazeReact>)
       addPendingTransaction(mockRevocationTransactionInfo)
       const { result } = renderHook(() => useHasPendingRevocation(USDC_MAINNET, PERMIT2_ADDRESS))
       expect(result.current).toBe(false)
